@@ -58,10 +58,7 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
     const classes = useStyles();
     const [value, setValue] = React.useState(props?.value ?? 0);
     const [tabs, setTabs] = React.useState<any[]>(props?.searches ?? []);
-    console.log(props?.searches);
-    console.log("Building", tabs.length, "tabs");
-
-    useEffect(() => {}, [props.searches])
+    useEffect(() => setTabs(props?.searches ?? []), [props.searches]);
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
     };
