@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -51,20 +51,24 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface ScrollableTabPanelProps {
     value?: number;
+    searches?: any[];
 }
 
 export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabPanelProps>) {
     const classes = useStyles();
     const [value, setValue] = React.useState(props?.value ?? 0);
-    const [tabs, setTabs] = React.useState<any[]>([]);
+    const [tabs, setTabs] = React.useState<any[]>(props?.searches ?? []);
+    console.log(props?.searches);
+    console.log("Building", tabs.length, "tabs");
 
+    useEffect(() => {}, [props.searches])
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
     };
 
     // This is really dumb...
     const newTab = (event: any) => {
-        const newTab = tabs.length;
+        const newTab = [`Search ${tabs.length}`, []];
         setTabs([...tabs, newTab]);
     };
 
@@ -80,15 +84,15 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
                     scrollButtons="auto"
                     aria-label="scrollable auto tabs example"
                 >
-                  {tabs.map((panel, index) =>
-                      <Tab className={classes.tab} label={ `Search ${index + 1}`} {...a11yProps(index)}/>
+                  {tabs.map(([name,], index) =>
+                      <Tab className={classes.tab} key={`${name}-${index}`} label={name} {...a11yProps(index)}/>
                   )}
                   <Tab label="+" onClick={newTab}/>
                 </Tabs>
             </AppBar>
-            {tabs.map(i => (
-                <TabPanel key={i} index={i} value={value}>
-                    <GalleryView />
+            {tabs.map(([name, searchResults], index) => (
+                <TabPanel key={`${name}-${index}`} index={index} value={value}>
+                    <GalleryView value={searchResults}/>
                 </TabPanel>
             ))}
         </div>

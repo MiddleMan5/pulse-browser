@@ -7,6 +7,7 @@ import { createStyles, fade, Theme, makeStyles } from "@material-ui/core/styles"
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import { ImageCard } from "./ImageCard";
+import {Image} from "../models";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -79,15 +80,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface GalleryViewProps {
     title?: string;
+    value?: Image[];
 }
 
 export function GalleryView(props?: GalleryViewProps) {
     const classes = useStyles();
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<string[]>([]);
+    const [queries, setQueries] = useState<string[]>([]);
+    const [results, setResults] = useState<Image[]>(props?.value ?? []);
 
     function submitSearch() {
-        setResults([...results, query]);
+        setQueries([...queries, query]);
     }
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -144,8 +147,8 @@ export function GalleryView(props?: GalleryViewProps) {
                 className={classes.gallery}
             >
                 {results.map((img) => (
-                    <Grid key={img} item>
-                        <ImageCard image={img} title={img} />
+                    <Grid key={img.uri} item>
+                        <ImageCard image={img.uri} title={img.uri} />
                     </Grid>
                 ))}
             </Grid>

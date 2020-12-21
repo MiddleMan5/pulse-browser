@@ -2,20 +2,18 @@ import { Box, Divider, Drawer, List, ListItem, ListItemText } from "@material-ui
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import IconButton from "@material-ui/core/IconButton";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import MenuIcon from "@material-ui/icons/Menu";
-import {Radio} from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useEffect } from "react";
-import { CustomThemeProvider, NavigationFooter, ScrollableTabPanel } from "./components";
-import { Site, Sites } from "./sites";
+import { PulseThemeProvider, NavigationFooter, ScrollableTabPanel } from "./components";
+import { SiteModel, Image } from "./models";
+import SiteList from "./SiteList";
 
 const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
     root: {
         display: "flex",
@@ -78,31 +76,26 @@ const useStyles = makeStyles((theme) => ({
         }),
         marginLeft: drawerWidth,
     },
+    siteLink: {
+        maxHeight: "20px",
+    },
 }));
 
-interface SearchMap {
-    [query: string]: string[];
-}
-
-const intitialSearches: SearchMap = {};
+// TODO: This is just a demo
+type SearchMap = { [query: string]: Image[] };
 
 interface HomeProps {}
-
 const Home: React.FC<HomeProps> = ({}) => {
     const classes = useStyles();
-    const [searches, setSearches] = React.useState<SearchMap>(intitialSearches);
+    const [searches, setSearches] = React.useState<SearchMap>({});
     const [open, setOpen] = React.useState(false);
 
-    async function loadSites(sites: Site[]) {
+    async function loadSites(sites: SiteModel[]) {
         const siteSearches: SearchMap = {};
         for (const site of sites) {
             try {
-                console.log("Searching site:", site.baseUrl);
-                const siteImages = await site.images();
-                const imageUrls = siteImages.map((img) => img.props?.file_url ?? "").filter((value) => value.length);
-                if (imageUrls) {
-                    siteSearches[site.baseUrl] = imageUrls;
-                }
+                console.log("Searching site:", site.name);
+                siteSearches[site.name] = await site.images();
             } catch (ex) {
                 continue;
             }
@@ -113,7 +106,7 @@ const Home: React.FC<HomeProps> = ({}) => {
 
     // Initial load
     useEffect(() => {
-        loadSites(Sites).then((value) => setSearches(value));
+        loadSites(SiteList).then((value) => setSearches(value));
     }, []);
 
     return (
@@ -135,7 +128,7 @@ const Home: React.FC<HomeProps> = ({}) => {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Board Spider
+                        Pulse Browser
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -153,12 +146,13 @@ const Home: React.FC<HomeProps> = ({}) => {
                         <ChevronLeftIcon />
                     </IconButton>
                 </div>
+                <Typography>Sites</Typography>
                 <Divider />
                 <List>
-                    {Sites.map((site, index) => (
+                    {SiteList.map((site, index) => (
                         <ListItem button key={index}>
-                            <img src={site.model.config?.icon ?? ""} alt=""/>
-                            <ListItemText primary={site.baseUrl} />
+                            <img src={site?.props?.icon ?? ""} alt="" className={classes.siteLink} />
+                            <ListItemText primary={site?.props?.uri} />
                         </ListItem>
                     ))}
                 </List>
@@ -169,7 +163,7 @@ const Home: React.FC<HomeProps> = ({}) => {
                 })}
             >
                 <div className={classes.drawerHeader} />
-                <ScrollableTabPanel />
+                <ScrollableTabPanel searches={Object.entries(searches)} />
                 <NavigationFooter />
             </Box>
         </Box>
@@ -178,9 +172,9 @@ const Home: React.FC<HomeProps> = ({}) => {
 
 export default function App() {
     return (
-        <CustomThemeProvider>
+        <PulseThemeProvider>
             <CssBaseline />
             <Home />
-        </CustomThemeProvider>
+        </PulseThemeProvider>
     );
 }
