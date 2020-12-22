@@ -200,8 +200,9 @@ export function GalleryView(props?: GalleryViewProps) {
                 </Button>
                 <OptionsMenuButton>
                     <FormGroup>
-                        {Object.entries(switches).map(([name, value]) => (
+                        {Object.entries(switches).map(([name, value], index) => (
                             <FormControlLabel
+                                key={`label-${index}`}
                                 control={<Switch size="small" checked={value} onChange={() => toggleChecked(name)} />}
                                 label={name}
                             />
