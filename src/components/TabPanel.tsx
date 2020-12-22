@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
-import { makeStyles, Theme } from "@material-ui/core/styles";
+import { IconButton } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
+import AddIcon from "@material-ui/icons/Add";
+import CloseIcon from "@material-ui/icons/Close";
+import React, { useEffect } from "react";
 import { GalleryView } from "./GalleryView";
 
 interface TabPanelProps {
@@ -23,11 +25,7 @@ export function TabPanel(props: React.PropsWithChildren<TabPanelProps>) {
             aria-labelledby={`scrollable-auto-tab-${index}`}
             {...other}
         >
-            {value === index && (
-                <Box p={3}>
-                    {children}
-                </Box>
-            )}
+            {value === index && <Box p={3}>{children}</Box>}
         </div>
     );
 }
@@ -40,12 +38,15 @@ function a11yProps(index: any) {
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
-    tab:{
+    tab: {
     },
     panel: {
         flexGrow: 1,
         width: "100%",
         backgroundColor: theme.palette.background.paper,
+    },
+    tabBar: {
+        minWidth: 10,
     },
 }));
 
@@ -63,9 +64,15 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
         setValue(newValue);
     };
 
+    const removeTab = (index: number) => {
+        const newTabs = [...tabs];
+        newTabs.splice(index, 1);
+        setTabs(newTabs);
+    };
+
     // This is really dumb...
     const newTab = (event: any) => {
-        const newTab = [`Search ${tabs.length}`, []];
+            const newTab = [`Search ${tabs.length}`, []];
         setTabs([...tabs, newTab]);
     };
 
@@ -74,22 +81,49 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
             <AppBar position="static" color="default">
                 <Tabs
                     value={value}
+                    className={classes.tabBar}
                     onChange={handleChange}
                     indicatorColor="primary"
-                    textColor="primary"
                     variant="scrollable"
                     scrollButtons="auto"
-                    aria-label="scrollable auto tabs example"
+                    aria-label="scrollable auto tabs "
                 >
-                  {tabs.map(([name,], index) =>
-                      <Tab className={classes.tab} key={`${name}-${index}`} label={name} {...a11yProps(index)}/>
-                  )}
-                  <Tab label="+" onClick={newTab}/>
+                    {tabs.map(([name, searchResults], index) => (
+                        <Tab
+                            className={classes.tab}
+                            key={`${name}-${index}`}
+                            {...a11yProps(index)}
+                            // disableRipple
+                            label={
+                                <span>
+                                    {name}
+                                    <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                            removeTab(index);
+                                        }}
+                                    >
+                                        <CloseIcon />
+                                    </IconButton>
+                                </span>
+                            }
+                        />
+                    ))}
+                    <Tab
+                        label={
+                            <span>
+                                <IconButton size="small" onClick={newTab}>
+                                    <AddIcon />
+                                </IconButton>
+                            </span>
+                        }
+                        onClick={newTab}
+                    />
                 </Tabs>
             </AppBar>
             {tabs.map(([name, searchResults], index) => (
                 <TabPanel key={`${name}-${index}`} index={index} value={value}>
-                    <GalleryView value={searchResults}/>
+                    <GalleryView value={searchResults} />
                 </TabPanel>
             ))}
         </div>

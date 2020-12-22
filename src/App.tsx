@@ -12,6 +12,7 @@ import React, { useEffect } from "react";
 import { PulseThemeProvider, NavigationFooter, ScrollableTabPanel } from "./components";
 import { SiteModel, Image } from "./models";
 import SiteList from "./SiteList";
+import GlobalStyles from "../resources/style.css" 
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({

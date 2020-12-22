@@ -1,13 +1,24 @@
-import React, { useState } from "react";
-import { AppBar, Toolbar, Grid, Container, Box, Button, Menu, MenuItem } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
+import {
+    Box,
+    Button,
+    Grid,
+    Menu,
+    Switch,
+    FormControlLabel,
+    FormGroup,
+    MenuItem,
+    Popper,
+    Paper,
+    ClickAwayListener,
+    MenuList,
+    Grow,
+} from "@material-ui/core";
 import InputBase from "@material-ui/core/InputBase";
-import { createStyles, fade, Theme, makeStyles } from "@material-ui/core/styles";
-import MenuIcon from "@material-ui/icons/Menu";
+import { createStyles, fade, makeStyles, Theme } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
+import React, { useEffect, useState } from "react";
+import { Image } from "../models";
 import { ImageCard } from "./ImageCard";
-import {Image} from "../models";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -54,6 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
             display: "flex",
             flexDirection: "row",
             flexWrap: "nowrap",
+            position: "sticky",
         },
         inputRoot: {
             color: "inherit",
@@ -78,6 +90,60 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
+export interface OptionsMenuButtonProps {}
+
+export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButtonProps>) {
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = React.useRef<HTMLButtonElement>(null);
+
+    // return focus to the button when we transitioned from !open -> open
+    const prevOpen = React.useRef(open);
+    React.useEffect(() => {
+        if (prevOpen.current === true && open === false) {
+            anchorRef.current!.focus();
+        }
+
+        prevOpen.current = open;
+    }, [open]);
+
+    const handleToggle = () => {
+        setOpen((prevOpen) => !prevOpen);
+    };
+
+    const handleClose = (event: React.MouseEvent<EventTarget>) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+            return;
+        }
+        setOpen(false);
+    };
+
+    return (
+        <div>
+            <Button
+                ref={anchorRef}
+                aria-controls={open ? "menu-list-grow" : undefined}
+                aria-haspopup="true"
+                onClick={handleToggle}
+            >
+                Options
+            </Button>
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === "bottom" ? "center top" : "center bottom" }}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>{props.children}</ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
+        </div>
+    );
+}
+
 interface GalleryViewProps {
     title?: string;
     value?: Image[];
@@ -92,15 +158,23 @@ export function GalleryView(props?: GalleryViewProps) {
     function submitSearch() {
         setQueries([...queries, query]);
     }
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+    // Switches
+    const number = queries.length;
+    const switchState: { [name: string]: boolean } = {
+        "simple option": false,
+        "a really long toggle option": false,
+        // TODO: This doesn't re-render properly
+        //[`option with variable label: ${number}`]: false,
+        "another option": false,
+    };
+    console.log(switchState);
+    const [switches, setSwitches] = React.useState(switchState);
+
+    const toggleChecked = (name: string) => {
+        setSwitches({ ...switches, [name]: !switches[name] });
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
     return (
         <Box>
             <Box className={classes.searchBar}>
@@ -121,22 +195,16 @@ export function GalleryView(props?: GalleryViewProps) {
                 <Button type="submit" onClick={submitSearch}>
                     Submit
                 </Button>
-                <div className={classes.searchSettings}>
-                    <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-                        Options
-                    </Button>
-                    <Menu
-                        id="simple-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem onClick={handleClose}>Profile</MenuItem>
-                        <MenuItem onClick={handleClose}>My account</MenuItem>
-                        <MenuItem onClick={handleClose}>Logout</MenuItem>
-                    </Menu>
-                </div>
+                <OptionsMenuButton>
+                    <FormGroup>
+                        {Object.entries(switches).map(([name, value]) => (
+                            <FormControlLabel
+                                control={<Switch size="small" checked={value} onChange={() => toggleChecked(name)} />}
+                                label={name}
+                            />
+                        ))}
+                    </FormGroup>
+                </OptionsMenuButton>
             </Box>
             <Grid
                 container

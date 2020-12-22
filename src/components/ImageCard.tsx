@@ -1,13 +1,10 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import React from "react";
 import { ImageCardMenu } from "./ImageCardMenu";
+import { ImageCardDialog } from "./ImageCardDialog";
 
 const useStyles = makeStyles({
     root: {
@@ -15,27 +12,44 @@ const useStyles = makeStyles({
     },
     media: {
         height: 140,
-        padding: 140, 
+        padding: 140,
     },
+    imageDialogContent: {
+        maxWidth: "100%",
+        maxHeight: "100%",
+    }
 });
 
 interface ImageCardProps {
     // Path to image
     image: string;
+    // FIXME: string | special react element thing IntrinsicAttributes
     title?: string;
     tags?: string[];
 }
 
 export const ImageCard: React.FC<ImageCardProps> = ({ image, title, tags }) => {
     const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+
+    const showImageDialog = () => {
+        setOpen(true);
+    };
+
+    const closeImageDialog = () => {
+        setOpen(false);
+    };
+
     return (
         <Card className={classes.root}>
-            
-              <CardActionArea>
+            <CardActionArea onClick={showImageDialog}>
                 <ImageCardMenu>
-                  <CardMedia className={classes.media} image={image} title={title ?? String(image)} />
+                    <CardMedia className={classes.media} image={image} title={title ?? String(image)} />
                 </ImageCardMenu>
-              </CardActionArea>          
+            </CardActionArea>
+            <ImageCardDialog title={title} open={open} onClose={closeImageDialog}>
+                <img src={image} className={classes.imageDialogContent} />
+            </ImageCardDialog>
         </Card>
     );
 };

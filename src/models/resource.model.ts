@@ -36,9 +36,6 @@ export interface SiteModel {
     // Site model configuration
     readonly props: SiteProps;
 
-    // health check / ping
-    online(): Promise<boolean>;
-
     // Query site for images
     images(query?: Query): Promise<Image[]>;
 

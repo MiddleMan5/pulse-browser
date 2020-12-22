@@ -1,10 +1,10 @@
 import { Image, Tag, SiteProps, SiteModel, Query } from "../models/resource.model";
 import axios from "axios";
-import PlanetIcon from "../../resources/icons/planet.png";
+import { FolderOpen } from "@material-ui/icons";
 
-export interface PicsumQuery extends Query {}
+export interface LocalQuery extends Query {}
 
-export class PicsumSite implements SiteModel {
+export class LocalSite implements SiteModel {
     public get name() {
         return this.constructor.name;
     }
@@ -13,15 +13,15 @@ export class PicsumSite implements SiteModel {
     private timeout = 5000;
 
     public readonly props: SiteProps = {
-        uri: "https://picsum.photos",
+        uri: "file://downloads",
         auth: undefined,
-        icon: PlanetIcon,
+        //icon: FolderOpen,
     };
 
     // TODO: Get from API
     protected supportedTags = ["$random"];
 
-    public async images(query?: PicsumQuery): Promise<Image[]> {
+    public async images(query?: LocalQuery): Promise<Image[]> {
         const queryUri = `${this.props.uri}/v2/list?page=${query?.page ?? 0}&limit=${query?.limit ?? 30}`;
         const resp = await axios.get(queryUri);
         console.log("Got response:", resp);
@@ -35,7 +35,7 @@ export class PicsumSite implements SiteModel {
     }
 
     // Returns all supported image tags
-    public async tags(query?: PicsumQuery): Promise<Tag[]> {
+    public async tags(query?: LocalQuery): Promise<Tag[]> {
         return this.supportedTags.filter((tag) => (query?.tags && tag in query.tags) || true);
     }
 }
