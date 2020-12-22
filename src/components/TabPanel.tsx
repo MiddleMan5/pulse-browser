@@ -38,8 +38,7 @@ function a11yProps(index: any) {
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
-    tab: {
-    },
+    tab: {},
     panel: {
         flexGrow: 1,
         width: "100%",
@@ -72,7 +71,7 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
 
     // This is really dumb...
     const newTab = (event: any) => {
-            const newTab = [`Search ${tabs.length}`, []];
+        const newTab = [`Search ${tabs.length}`, []];
         setTabs([...tabs, newTab]);
     };
 
@@ -109,7 +108,7 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
                             }
                         />
                     ))}
-                    <Tab 
+                    <Tab
                         label={
                             <span>
                                 <IconButton size="small" onClick={newTab}>

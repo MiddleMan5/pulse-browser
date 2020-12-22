@@ -1,4 +1,4 @@
-import { Box, Divider, Drawer, List, ListItem, ListItemText } from "@material-ui/core";
+import { Box, Divider, Drawer, List, ListItem, ListItemText, ListItemIcon } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import IconButton from "@material-ui/core/IconButton";
@@ -11,6 +11,7 @@ import clsx from "clsx";
 import React, { useEffect } from "react";
 import { PulseThemeProvider, NavigationFooter, ScrollableTabPanel } from "./components";
 import { SiteModel, Image } from "./models";
+import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import SiteList from "./SiteList";
 
 // FIXME: Webpack / Babel is having problems with css
@@ -83,7 +84,10 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: drawerWidth,
     },
     siteLink: {
-        maxHeight: "20px",
+        maxHeight: "30px"
+    },
+    siteLinkIcon: {
+        maxHeight: "30px",
     },
 }));
 
@@ -117,28 +121,23 @@ const Home: React.FC<HomeProps> = ({}) => {
 
     return (
         <Box className={classes.root}>
-            <AppBar
-                position="static"
-                className={clsx(classes.appBar, {
-                    [classes.appBarShift]: open,
-                })}
+            <Toolbar variant="dense"                
+            className={clsx(classes.appBar, classes.toolbar, {
+                [classes.appBarShift]: open,
+            })}
             >
-                <Toolbar variant="dense" className={classes.toolbar}>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={() => setOpen(true)}
-                        edge="start"
-                        size="small"
-                        className={clsx(classes.menuButton, open && classes.hide)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="subtitle2" noWrap>
-                        Pulse Browser
-                    </Typography>
-                </Toolbar>
-            </AppBar>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={() => setOpen(true)}
+                    edge="start"
+                    size="small"
+                    className={clsx(classes.menuButton, open && classes.hide)}
+                >
+                    <MenuIcon />
+                </IconButton>
+
+            </Toolbar>
             <Drawer
                 className={classes.drawer}
                 variant="persistent"
@@ -157,9 +156,11 @@ const Home: React.FC<HomeProps> = ({}) => {
                 <Divider />
                 <List>
                     {SiteList.map((site, index) => (
-                        <ListItem button key={index}>
-                            <img src={site?.props?.icon ?? ""} alt="" className={classes.siteLink} />
-                            <ListItemText primary={site?.props?.uri} />
+                        <ListItem button key={index} className={classes.siteLink}>
+                            <ListItemIcon className={classes.siteLinkIcon}>
+                                {site?.props?.icon ? <img src={site.props.icon} alt="" className={classes.siteLinkIcon} /> : <DonutLargeIcon className={classes.siteLinkIcon}/>  }
+                            </ListItemIcon>
+                            <ListItemText primary={site?.name} />
                         </ListItem>
                     ))}
                 </List>

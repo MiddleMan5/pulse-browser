@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { Theme, ThemeProvider } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
+// FIXME: Themes don't seem to be applying properly
+
 // TODO: Bundle themes from json files in directory? (webpack)
 import DarkTheme from "./dark.theme";
 import LightTheme from "./light.theme";
