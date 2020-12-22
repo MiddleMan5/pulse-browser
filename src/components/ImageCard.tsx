@@ -14,6 +14,7 @@ const useStyles = makeStyles({
         height: 140,
         padding: 140,
     },
+    // TODO: Something quirky is going on with the full size image size
     imageDialogContent: {
         maxWidth: "100%",
         maxHeight: "100%",

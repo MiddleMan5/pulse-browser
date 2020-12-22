@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
         marginTop: "auto",
         backgroundColor: theme.palette.type === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
     },
+    toolbar: {
+        minHeight: "36px",
+    },
     appBar: {
         transition: theme.transitions.create(["margin", "width"], {
             easing: theme.transitions.easing.sharp,
@@ -98,7 +101,7 @@ const Home: React.FC<HomeProps> = ({}) => {
                 console.log("Searching site:", site.name);
                 siteSearches[site.name] = await site.images();
             } catch (ex) {
-                continue;
+                console.error("Failed to retrieve images from site:", site.name, ex);
             }
         }
         console.log("Found images:", siteSearches);
@@ -118,17 +121,18 @@ const Home: React.FC<HomeProps> = ({}) => {
                     [classes.appBarShift]: open,
                 })}
             >
-                <Toolbar>
+                <Toolbar variant="dense" className={classes.toolbar}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
                         onClick={() => setOpen(true)}
                         edge="start"
+                        size="small"
                         className={clsx(classes.menuButton, open && classes.hide)}
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
+                    <Typography variant="subtitle2" noWrap>
                         Pulse Browser
                     </Typography>
                 </Toolbar>
@@ -143,7 +147,7 @@ const Home: React.FC<HomeProps> = ({}) => {
                 }}
             >
                 <div className={classes.drawerHeader}>
-                    <IconButton onClick={() => setOpen(false)}>
+                    <IconButton size="small" onClick={() => setOpen(false)}>
                         <ChevronLeftIcon />
                     </IconButton>
                 </div>
