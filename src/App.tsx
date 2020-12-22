@@ -1,21 +1,22 @@
-import { Box, Divider, Drawer, List, ListItem, ListItemText, ListItemIcon } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
+import { Box, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, Paper } from "@material-ui/core";
+import BottomNavigation from "@material-ui/core/BottomNavigation";
+import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import DonutLargeIcon from "@material-ui/icons/DonutLarge";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import HomeIcon from "@material-ui/icons/Home";
 import MenuIcon from "@material-ui/icons/Menu";
+import SettingsIcon from "@material-ui/icons/Settings";
 import clsx from "clsx";
 import React, { useEffect } from "react";
-import { PulseThemeProvider, NavigationFooter, ScrollableTabPanel } from "./components";
-import { SiteModel, Image } from "./models";
-import DonutLargeIcon from '@material-ui/icons/DonutLarge';
+import { PulseThemeProvider, ScrollableTabPanel } from "./components";
+import { Image, SiteModel } from "./models";
 import SiteList from "./SiteList";
-
-// FIXME: Webpack / Babel is having problems with css
-import GlobalStyles from "../resources/style.css" 
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -25,10 +26,14 @@ const useStyles = makeStyles((theme) => ({
         height: "100vh",
         width: "100vw",
     },
+    // FIXME: Add footer shadow
     footer: {
         padding: theme.spacing(3, 2),
         marginTop: "auto",
         backgroundColor: theme.palette.type === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
+        width: "100%",
+        position: "fixed",
+        bottom: 0,
     },
     toolbar: {
         minHeight: "36px",
@@ -84,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: drawerWidth,
     },
     siteLink: {
-        maxHeight: "30px"
+        maxHeight: "30px",
     },
     siteLinkIcon: {
         maxHeight: "30px",
@@ -99,6 +104,7 @@ const Home: React.FC<HomeProps> = ({}) => {
     const classes = useStyles();
     const [searches, setSearches] = React.useState<SearchMap>({});
     const [open, setOpen] = React.useState(false);
+    const [footerValue, setFooterValue] = React.useState(0);
 
     async function loadSites(sites: SiteModel[]) {
         const siteSearches: SearchMap = {};
@@ -121,10 +127,11 @@ const Home: React.FC<HomeProps> = ({}) => {
 
     return (
         <Box className={classes.root}>
-            <Toolbar variant="dense"                
-            className={clsx(classes.appBar, classes.toolbar, {
-                [classes.appBarShift]: open,
-            })}
+            <Toolbar
+                variant="dense"
+                className={clsx(classes.appBar, classes.toolbar, {
+                    [classes.appBarShift]: open,
+                })}
             >
                 <IconButton
                     color="inherit"
@@ -136,7 +143,6 @@ const Home: React.FC<HomeProps> = ({}) => {
                 >
                     <MenuIcon />
                 </IconButton>
-
             </Toolbar>
             <Drawer
                 className={classes.drawer}
@@ -158,29 +164,40 @@ const Home: React.FC<HomeProps> = ({}) => {
                     {SiteList.map((site, index) => (
                         <ListItem button key={index} className={classes.siteLink}>
                             <ListItemIcon className={classes.siteLinkIcon}>
-                                {site?.props?.icon ? <img src={site.props.icon} alt="" className={classes.siteLinkIcon} /> : <DonutLargeIcon className={classes.siteLinkIcon}/>  }
+                                {site?.props?.icon ? (
+                                    <img src={site.props.icon} alt="" className={classes.siteLinkIcon} />
+                                ) : (
+                                    <DonutLargeIcon className={classes.siteLinkIcon} />
+                                )}
                             </ListItemIcon>
                             <ListItemText primary={site?.name} />
                         </ListItem>
                     ))}
                 </List>
             </Drawer>
-            <Box
-                className={clsx(classes.content, {
-                    [classes.contentShift]: open,
-                })}
-            >
+            <Paper className={classes.content}>
                 <div className={classes.drawerHeader} />
                 <ScrollableTabPanel searches={Object.entries(searches)} />
-                <NavigationFooter />
-            </Box>
+            </Paper>
+            <BottomNavigation
+                value={footerValue}
+                onChange={(event, newValue) => {
+                    setFooterValue(newValue);
+                }}
+                showLabels
+                className={classes.footer}
+            >
+                <BottomNavigationAction label="Home" icon={<HomeIcon />} />
+                <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+                <BottomNavigationAction label="Settings" icon={<SettingsIcon />} />
+            </BottomNavigation>
         </Box>
     );
 };
 
 export default function App() {
     return (
-        <PulseThemeProvider themeName={'DarkTheme'}>
+        <PulseThemeProvider themeName={"DarkTheme"}>
             <CssBaseline />
             <Home />
         </PulseThemeProvider>

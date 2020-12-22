@@ -22,6 +22,9 @@ import { ImageCard } from "./ImageCard";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        root: {
+            
+        },
         menuButton: {
             marginRight: theme.spacing(2),
         },
@@ -176,7 +179,7 @@ export function GalleryView(props?: GalleryViewProps) {
     };
 
     return (
-        <Box>
+        <Box className={classes.root}>
             <Box className={classes.searchBar}>
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>
