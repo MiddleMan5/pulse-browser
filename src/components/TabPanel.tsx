@@ -70,7 +70,7 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
     };
 
     // This is really dumb...
-    const newTab = (event: any) => {
+    const addTab = (event: any) => {
         const newTab = [`Search ${tabs.length}`, []];
         setTabs([...tabs, newTab]);
     };
@@ -89,33 +89,34 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
                 >
                     {tabs.map(([name, searchResults], index) => (
                         <Tab
+                            component="div"
                             className={classes.tab}
+                            icon={
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        removeTab(index);
+                                    }}
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                            }
                             key={`${name}-${index}`}
                             {...a11yProps(index)}
                             // disableRipple
-                            label={
-                                <span>
-                                    {name}
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => {
-                                            removeTab(index);
-                                        }}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                </span>
-                            }
+                            label={name}
                         />
                     ))}
                     <Tab
-                        label={
-                            <span>
-                                <IconButton size="small" onClick={newTab}>
-                                    <AddIcon />
-                                </IconButton>
-                            </span>
+                        component="div"
+                        icon={
+                            <IconButton size="small" onClick={addTab}>
+                                <AddIcon />
+                            </IconButton>
                         }
+                        key="new-search-tab"
+                        {...a11yProps("new-search-tab")}
+                        disableRipple
                     />
                 </Tabs>
             </AppBar>
