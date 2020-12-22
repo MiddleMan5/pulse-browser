@@ -109,7 +109,7 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
                             }
                         />
                     ))}
-                    <Tab
+                    <Tab 
                         label={
                             <span>
                                 <IconButton size="small" onClick={newTab}>
@@ -117,7 +117,6 @@ export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabP
                                 </IconButton>
                             </span>
                         }
-                        onClick={newTab}
                     />
                 </Tabs>
             </AppBar>

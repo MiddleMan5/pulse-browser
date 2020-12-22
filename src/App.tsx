@@ -12,6 +12,8 @@ import React, { useEffect } from "react";
 import { PulseThemeProvider, NavigationFooter, ScrollableTabPanel } from "./components";
 import { SiteModel, Image } from "./models";
 import SiteList from "./SiteList";
+
+// FIXME: Webpack / Babel is having problems with css
 import GlobalStyles from "../resources/style.css" 
 
 const drawerWidth = 240;
@@ -177,7 +179,7 @@ const Home: React.FC<HomeProps> = ({}) => {
 
 export default function App() {
     return (
-        <PulseThemeProvider>
+        <PulseThemeProvider themeName={'DarkTheme'}>
             <CssBaseline />
             <Home />
         </PulseThemeProvider>
