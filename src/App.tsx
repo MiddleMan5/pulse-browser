@@ -14,7 +14,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SettingsIcon from "@material-ui/icons/Settings";
 import clsx from "clsx";
 import React, { useEffect } from "react";
-import { PulseThemeProvider, ScrollableTabPanel } from "./components";
+import { PulseThemeProvider, LoadableTabPanel } from "./components";
 import { Image, SiteModel } from "./models";
 import SiteList from "./SiteList";
 
@@ -177,7 +177,7 @@ const Home: React.FC<HomeProps> = ({}) => {
             </Drawer>
             <Paper className={classes.content}>
                 <div className={classes.drawerHeader} />
-                <ScrollableTabPanel searches={Object.entries(searches)} />
+                <LoadableTabPanel searches={Object.entries(searches)} />
             </Paper>
             <BottomNavigation
                 value={footerValue}

@@ -165,11 +165,8 @@ export function GalleryView(props?: GalleryViewProps) {
     // Switches
     const number = queries.length;
     const switchState: { [name: string]: boolean } = {
-        "simple option": false,
-        "a really long toggle option": false,
-        // TODO: This doesn't re-render properly
-        //[`option with variable label: ${number}`]: false,
-        "another option": false,
+        "Hide Saved": false,
+        "Hide Video": false,
     };
     console.log(switchState);
     const [switches, setSwitches] = React.useState(switchState);

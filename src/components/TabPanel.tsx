@@ -9,19 +9,19 @@ import CloseIcon from "@material-ui/icons/Close";
 import React, { useEffect } from "react";
 import { GalleryView } from "./GalleryView";
 
-interface TabPanelProps {
+interface TabPageProps {
     index: any;
     value: any;
 }
 
-export function TabPanel(props: React.PropsWithChildren<TabPanelProps>) {
+export function TabPage(props: React.PropsWithChildren<TabPageProps>) {
     const { children, value, index, ...other } = props;
 
     return (
         <div
-            role="tabpanel"
+            role="tabpage"
             hidden={value !== index}
-            id={`scrollable-auto-tabpanel-${index}`}
+            id={`scrollable-auto-tabpage-${index}`}
             aria-labelledby={`scrollable-auto-tab-${index}`}
             {...other}
         >
@@ -49,12 +49,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-interface ScrollableTabPanelProps {
+interface TabPanelProps {
     value?: number;
     searches?: any[];
 }
 
-export function ScrollableTabPanel(props: React.PropsWithChildren<ScrollableTabPanelProps>) {
+export default function TabPanel(props: React.PropsWithChildren<TabPanelProps> | any) {
     const classes = useStyles();
     const [value, setValue] = React.useState(props?.value ?? 0);
     const [tabs, setTabs] = React.useState<any[]>(props?.searches ?? []);
