@@ -34,6 +34,8 @@ if (!requiredByDLLConfig && !(fs.existsSync(dllDir) && fs.existsSync(manifest)))
   execSync('npm run postinstall');
 }
 
+const outputFilename = 'renderer.dev.js';
+
 export default merge(baseConfig, {
   devtool: 'inline-source-map',
 
@@ -49,7 +51,7 @@ export default merge(baseConfig, {
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js',
+    filename: outputFilename,
   },
 
   module: {
@@ -247,6 +249,7 @@ export default merge(baseConfig, {
     stats: 'errors-only',
     inline: true,
     lazy: false,
+    filename: outputFilename,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
     contentBase: path.join(__dirname, '..', 'dist'),

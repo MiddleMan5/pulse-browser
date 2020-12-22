@@ -1,11 +1,7 @@
-import { IconButton } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
-import AddIcon from "@material-ui/icons/Add";
-import CloseIcon from "@material-ui/icons/Close";
+import { makeStyles, Theme, Tab, Tabs, IconButton } from "@material-ui/core";
+import { Add as AddIcon, Close as CloseIcon } from "@material-ui/icons";
 import React, { useEffect } from "react";
 import { GalleryView } from "./GalleryView";
 
@@ -121,9 +117,9 @@ export default function TabPanel(props: React.PropsWithChildren<TabPanelProps> |
                 </Tabs>
             </AppBar>
             {tabs.map(([name, searchResults], index) => (
-                <TabPanel key={`${name}-${index}`} index={index} value={value}>
+                <TabPage key={`${name}-${index}`} index={index} value={value}>
                     <GalleryView value={searchResults} />
-                </TabPanel>
+                </TabPage>
             ))}
         </div>
     );

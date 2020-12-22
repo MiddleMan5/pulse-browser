@@ -1,20 +1,31 @@
-import { Box, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, Paper } from "@material-ui/core";
-import BottomNavigation from "@material-ui/core/BottomNavigation";
-import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import DonutLargeIcon from "@material-ui/icons/DonutLarge";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import HomeIcon from "@material-ui/icons/Home";
-import MenuIcon from "@material-ui/icons/Menu";
-import SettingsIcon from "@material-ui/icons/Settings";
+import {
+    BottomNavigation,
+    BottomNavigationAction,
+    Box,
+    CssBaseline,
+    Divider,
+    Drawer,
+    IconButton,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    makeStyles,
+    Paper,
+    Toolbar,
+    Typography,
+} from "@material-ui/core";
+import {
+    ChevronLeft as ChevronLeftIcon,
+    DonutLarge as DonutLargeIcon,
+    Favorite as FavoriteIcon,
+    Home as HomeIcon,
+    Menu as MenuIcon,
+    Settings as SettingsIcon,
+} from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useEffect } from "react";
-import { PulseThemeProvider, LoadableTabPanel } from "./components";
+import { LoadableTabPanel, PulseThemeProvider } from "./components";
 import { Image, SiteModel } from "./models";
 import SiteList from "./SiteList";
 

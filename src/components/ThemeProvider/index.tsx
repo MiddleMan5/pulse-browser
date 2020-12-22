@@ -24,7 +24,6 @@ interface PulseThemeProviderProps {
 }
 
 export const PulseThemeProvider = (props: React.PropsWithChildren<PulseThemeProviderProps>) => {
-    // eslint-disable-next-line react/prop-types
     const { children } = props;
 
     // Check to see if color scheme requested from browser
