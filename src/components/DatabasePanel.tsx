@@ -17,7 +17,7 @@ import { Add as AddIcon, Delete as DeleteIcon } from "@material-ui/icons";
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import React, { useState } from "react";
-import { pulseDatabase, Collection } from "../PulseDatabase";
+import { pulseDatabase, Collection } from "../store/PulseDatabase";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {

@@ -1,10 +1,16 @@
-import { Tag, Image, SiteModel, Query } from "./models";
+import { Tag, Image, SiteModel, Query } from "../models";
 import PouchDB from "pouchdb-browser";
 import PouchDBFind from "pouchdb-find";
-import siteList from "./models/SiteList";
+import siteList from "../models/SiteList";
 
 // Load mongo-like (mango) query plugin
 PouchDB.plugin(PouchDBFind);
+
+// TODO: App settings state in DB
+export const DefaultSettings = {
+    enabled: true,
+    appName: "Pulse Browser",
+}
 
 interface IndexOptions {
     name: string;
@@ -32,33 +38,11 @@ export class PulseDatabase {
             name: "settings",
             fields: ["type", "value"],
         },
+        {
+            name: "sites",
+            fields: ["uri", "name"],
+        },
     ];
-
-    public async sites(): Promise<SiteModel[]> {
-        return siteList;
-    }
-
-    public async images(query: Query = {}): Promise<Image[]> {
-        const sites = await this.sites();
-        const siteImageLists = await Promise.all(
-            sites.map(async (site) => {
-                return site.images(query);
-            })
-        );
-        const siteImages = siteImageLists.flatMap((images) => images);
-        return siteImages;
-    }
-
-    public async tags(query: Query = {}): Promise<Tag[]> {
-        const sites = await this.sites();
-        const siteTagLists = await Promise.all(
-            sites.map(async (site) => {
-                return site.tags(query);
-            })
-        );
-        const siteTags = siteTagLists.flatMap((tags) => tags);
-        return siteTags;
-    }
 
     // Get all provided (non-special) collections in database
     public async createCollection(collection: Omit<Collection, "ddoc">) {
@@ -113,6 +97,38 @@ export class PulseDatabase {
             console.log("Creating index:", options);
             await this.db.createIndex({ index: { ...options } });
         }
+    }
+
+    // Default collections
+
+    public async settings(): Promise<Settings> {
+        return {};
+    }
+
+    public async sites(): Promise<SiteModel[]> {
+        return siteList;
+    }
+
+    public async images(query: Query = {}): Promise<Image[]> {
+        const sites = await this.sites();
+        const siteImageLists = await Promise.all(
+            sites.map(async (site) => {
+                return site.images(query);
+            })
+        );
+        const siteImages = siteImageLists.flatMap((images) => images);
+        return siteImages;
+    }
+
+    public async tags(query: Query = {}): Promise<Tag[]> {
+        const sites = await this.sites();
+        const siteTagLists = await Promise.all(
+            sites.map(async (site) => {
+                return site.tags(query);
+            })
+        );
+        const siteTags = siteTagLists.flatMap((tags) => tags);
+        return siteTags;
     }
 }
 

@@ -12,7 +12,8 @@
     "postinstall": "node -r @babel/register ./scripts/CheckNativeDep.js && electron-builder install-app-deps && NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall",
     "start": "node -r @babel/register ./scripts/CheckPortInUse.js && npm run start:renderer",
     "start:main": "NODE_ENV=development electron -r ./scripts/BabelRegister ./src/main.ts",
-    "start:renderer": "NODE_ENV=development webpack serve --config ./configs/webpack.config.renderer.dev.babel.js"
+    "start:renderer": "NODE_ENV=development webpack serve --config ./configs/webpack.config.renderer.dev.babel.js",
+    "prettier:fix": "prettier --write **/*.{js,jsx,json,ts,tsx,yml}"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

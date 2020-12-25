@@ -27,8 +27,8 @@ import {
 } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { TabPanel, SettingsPanel, DatabasePanel, PulseThemeProvider } from "./components";
-import SiteList from "./models/SiteList";
+import { TabPanel, SettingsPanel, DatabasePanel, PulseThemeProvider } from "../components";
+import SiteList from "../models/SiteList";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
