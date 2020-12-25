@@ -3,7 +3,7 @@ module.exports = {
     rules: {
         "no-console": "off",
         "global-require": "off",
-        "import/no-dynamic-require": "off"
+        "import/no-dynamic-require": "off",
         "@typescript-eslint/naming-convention": "warn",
         "@typescript-eslint/no-unused-vars": "warn",
         "@typescript-eslint/no-unused-vars/no-explicit-any": "warn",

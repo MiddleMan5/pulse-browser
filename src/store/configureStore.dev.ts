@@ -16,68 +16,68 @@
  *
  */
 
-import { createStore, applyMiddleware, compose } from 'redux';
-import { persistStore } from 'redux-persist';
-import thunk from 'redux-thunk';
-import { createLogger } from 'redux-logger';
-import rootReducer from '../reducers';
-import onlineListener from '../services/onlineListener';
+import { createStore, applyMiddleware, compose } from "redux";
+import { persistStore } from "redux-persist";
+import thunk from "redux-thunk";
+import { createLogger } from "redux-logger";
+import rootReducer from "../reducers";
+import onlineListener from "../services/onlineListener";
 
-const configureStore = initialState => {
-  // Redux Configuration
-  const middleware = [];
-  const enhancers = [];
+const configureStore = (initialState) => {
+    // Redux Configuration
+    const middleware = [];
+    const enhancers = [];
 
-  // Thunk Middleware
-  middleware.push(thunk);
+    // Thunk Middleware
+    middleware.push(thunk);
 
-  // Logging Middleware
-  const logger = createLogger({
-    level: 'info',
-    collapsed: true
-  });
-  middleware.push(logger);
+    // Logging Middleware
+    const logger = createLogger({
+        level: "info",
+        collapsed: true,
+    });
+    middleware.push(logger);
 
-  // Redux DevTools Configuration
-  const actionCreators = {
-    // ...routerActions
-  };
-  // If Redux DevTools Extension is installed use it, otherwise use Redux compose
-  /* eslint-disable no-underscore-dangle */
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-        // Options: http://zalmoxisus.github.io/redux-devtools-extension/API/Arguments.html
-        actionCreators
-      })
-    : compose;
-  /* eslint-enable no-underscore-dangle */
+    // Redux DevTools Configuration
+    const actionCreators = {
+        // ...routerActions
+    };
+    // If Redux DevTools Extension is installed use it, otherwise use Redux compose
+    /* eslint-disable no-underscore-dangle */
+    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+        ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+              // Options: http://zalmoxisus.github.io/redux-devtools-extension/API/Arguments.html
+              actionCreators,
+          })
+        : compose;
+    /* eslint-enable no-underscore-dangle */
 
-  // Apply Middleware & Compose Enhancers
-  enhancers.push(applyMiddleware(...middleware));
-  // enhancers.push(autoRehydrate()); removed in v5
-  const enhancer = composeEnhancers(...enhancers);
+    // Apply Middleware & Compose Enhancers
+    enhancers.push(applyMiddleware(...middleware));
+    // enhancers.push(autoRehydrate()); removed in v5
+    const enhancer = composeEnhancers(...enhancers);
 
-  // Create Store
-  const store = createStore(rootReducer, initialState, enhancer);
+    // Create Store
+    const store = createStore(rootReducer, initialState, enhancer);
 
-  onlineListener(store.dispatch);
+    onlineListener(store.dispatch);
 
-  const persistor = persistStore(
-    store
-  ); /* , null, () => {
+    const persistor = persistStore(
+        store
+    ); /* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
     // store.dispatch(push('/main'));
     console.log('Store rehydrated.');
   }); */
 
-  if (module.hot) {
-    module.hot.accept(
-      '../reducers',
-      () => store.replaceReducer(require('../reducers')) // eslint-disable-line global-require
-    );
-  }
+    if (module.hot) {
+        module.hot.accept(
+            "../reducers",
+            () => store.replaceReducer(require("../reducers")) // eslint-disable-line global-require
+        );
+    }
 
-  return { store, persistor };
+    return { store, persistor };
 };
 
 export default { configureStore };

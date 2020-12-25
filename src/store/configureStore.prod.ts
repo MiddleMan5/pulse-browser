@@ -16,26 +16,26 @@
  *
  */
 
-import { compose, createStore, applyMiddleware } from 'redux';
-import { persistStore } from 'redux-persist';
-import thunk from 'redux-thunk';
-import rootReducer from '../reducers';
-import onlineListener from '../services/onlineListener';
+import { compose, createStore, applyMiddleware } from "redux";
+import { persistStore } from "redux-persist";
+import thunk from "redux-thunk";
+import rootReducer from "../reducers";
+import onlineListener from "../services/onlineListener";
 
 const enhancer = compose(
-  applyMiddleware(thunk) // , router)
-  // autoRehydrate()
+    applyMiddleware(thunk) // , router)
+    // autoRehydrate()
 );
 
 function configureStore(initialState) {
-  const store = createStore(rootReducer, initialState, enhancer);
-  onlineListener(store.dispatch);
-  const persistor = persistStore(
-    store
-  ); /* , null, () => {
+    const store = createStore(rootReducer, initialState, enhancer);
+    onlineListener(store.dispatch);
+    const persistor = persistStore(
+        store
+    ); /* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
   }); */
-  return { store, persistor };
+    return { store, persistor };
 }
 
 export default { configureStore };

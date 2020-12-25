@@ -15,12 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import configureStoreDev from './configureStore.dev';
-import configureStoreProd from './configureStore.prod';
+import configureStoreDev from "./configureStore.dev";
+import configureStoreProd from "./configureStore.prod";
 
-const selectedConfigureStore =
-  process.env.NODE_ENV === 'production'
-    ? configureStoreProd
-    : configureStoreDev;
+const selectedConfigureStore = process.env.NODE_ENV === "production" ? configureStoreProd : configureStoreDev;
 const { configureStore } = selectedConfigureStore;
 export default configureStore;

@@ -10,7 +10,7 @@ PouchDB.plugin(PouchDBFind);
 export const DefaultSettings = {
     enabled: true,
     appName: "Pulse Browser",
-}
+};
 
 interface IndexOptions {
     name: string;

@@ -1,5 +1,4 @@
-
-import {SiteModel} from "..";
+import { SiteModel } from "..";
 import { PicsumSite } from "./picsum.site";
 export * as PicsumSite from "./picsum.site";
 import { LocalSite } from "./local.site";

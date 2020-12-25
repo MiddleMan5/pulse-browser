@@ -17,10 +17,10 @@ function PaperComponent(props: PaperProps) {
 }
 
 export interface ImageCardDialogProps {
-    open: boolean,
-    title: any,
+    open: boolean;
+    title: any;
     onClose: () => void;
-};
+}
 
 const useStyles = makeStyles({
     root: {
@@ -43,9 +43,7 @@ export function ImageCardDialog(props: React.PropsWithChildren<ImageCardDialogPr
             <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
                 {props.title}
             </DialogTitle>
-            <DialogContent>
-                {props.children}
-            </DialogContent>
+            <DialogContent>{props.children}</DialogContent>
             <DialogActions>
                 <Button onClick={props.onClose} color="primary">
                     Close

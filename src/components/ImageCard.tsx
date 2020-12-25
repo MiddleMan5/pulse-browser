@@ -18,7 +18,7 @@ const useStyles = makeStyles({
     imageDialogContent: {
         maxWidth: "100%",
         maxHeight: "100%",
-    }
+    },
 });
 
 interface ImageCardProps {
