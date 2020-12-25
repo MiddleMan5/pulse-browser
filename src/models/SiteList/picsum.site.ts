@@ -1,6 +1,6 @@
-import { Image, Tag, SiteProps, SiteModel, Query } from "../models/resource.model";
+import { Image, Tag, SiteProps, SiteModel, Query } from "../resource.model";
 import axios from "axios";
-import PlanetIcon from "../../resources/icons/planet.png";
+import PlanetIcon from "../../../resources/icons/planet.png";
 
 export interface PicsumQuery extends Query {}
 
@@ -20,11 +20,11 @@ export class PicsumSite implements SiteModel {
 
     // Remote image cache
     protected maxCachedImages = 1000;
-    protected imageCache: {[uri: string]: any} = {};
+    protected imageCache: { [uri: string]: any } = {};
 
     // Clean up cache if images exceed arbitrary value
-    protected validateCache(){
-        if(Object.keys(this.imageCache).length >= this.maxCachedImages){
+    protected validateCache() {
+        if (Object.keys(this.imageCache).length >= this.maxCachedImages) {
             this.imageCache = {};
         }
     }
@@ -35,17 +35,17 @@ export class PicsumSite implements SiteModel {
     public async images(query?: PicsumQuery): Promise<Image[]> {
         const queryUri = `${this.props.uri}/v2/list?page=${query?.page ?? 0}&limit=${query?.limit ?? 30}`;
         const resp = await axios.get(queryUri);
-        
+
         this.validateCache();
 
         // TODO: Validate response
         const imageList = resp.data as any[];
         const resolveImage = async (uri: string) => {
             // TODO: Provide global image caching in SiteModel
-            if(uri in this.imageCache && this.imageCache[uri]){
+            if (uri in this.imageCache && this.imageCache[uri]) {
                 return this.imageCache[uri];
             }
-            const resp = await axios.get(uri, { timeout: this.timeout});
+            const resp = await axios.get(uri, { timeout: this.timeout });
             const imageData = resp.data;
             this.imageCache[uri] = imageData;
             return imageData;

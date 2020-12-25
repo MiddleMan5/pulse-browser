@@ -1,6 +1,7 @@
 import {
     BottomNavigation,
     BottomNavigationAction,
+    BottomNavigationActionProps,
     Box,
     CssBaseline,
     Divider,
@@ -10,11 +11,11 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
-    makeStyles,
     Paper,
     Toolbar,
     Typography,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import {
     ChevronLeft as ChevronLeftIcon,
     DonutLarge as DonutLargeIcon,
@@ -22,12 +23,12 @@ import {
     Home as HomeIcon,
     Menu as MenuIcon,
     Settings as SettingsIcon,
+    Storage as StorageIcon,
 } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { useEffect } from "react";
-import { LoadableTabPanel, PulseThemeProvider } from "./components";
-import { Image, SiteModel } from "./models";
-import SiteList from "./SiteList";
+import React from "react";
+import { TabPanel, SettingsPanel, DatabasePanel, PulseThemeProvider } from "./components";
+import SiteList from "./models/SiteList";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -107,34 +108,34 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-// TODO: This is just a demo
-type SearchMap = { [query: string]: Image[] };
+interface NavigationMapItem {
+    props: BottomNavigationActionProps;
+    value: JSX.Element;
+}
 
 interface HomeProps {}
 const Home: React.FC<HomeProps> = ({}) => {
     const classes = useStyles();
-    const [searches, setSearches] = React.useState<SearchMap>({});
     const [open, setOpen] = React.useState(false);
-    const [footerValue, setFooterValue] = React.useState(0);
-
-    async function loadSites(sites: SiteModel[]) {
-        const siteSearches: SearchMap = {};
-        for (const site of sites) {
-            try {
-                console.log("Searching site:", site.name);
-                siteSearches[site.name] = await site.images();
-            } catch (ex) {
-                console.error("Failed to retrieve images from site:", site.name, ex);
-            }
-        }
-        console.log("Found images:", siteSearches);
-        return siteSearches;
-    }
-
-    // Initial load
-    useEffect(() => {
-        loadSites(SiteList).then((value) => setSearches(value));
-    }, []);
+    const [footerIndex, setFooterIndex] = React.useState(0);
+    const [routes] = React.useState<NavigationMapItem[]>([
+        {
+            props: { key: "home", title: "Home", icon: <HomeIcon /> },
+            value: <TabPanel />,
+        },
+        {
+            props: { key: "favorites", title: "Favorites", icon: <FavoriteIcon /> },
+            value: <div />,
+        },
+        {
+            props: { key: "database", title: "Database", icon: <StorageIcon /> },
+            value: <DatabasePanel />,
+        },
+        {
+            props: { key: "settings", title: "Settings", icon: <SettingsIcon /> },
+            value: <SettingsPanel />,
+        },
+    ]);
 
     return (
         <Box className={classes.root}>
@@ -186,22 +187,21 @@ const Home: React.FC<HomeProps> = ({}) => {
                     ))}
                 </List>
             </Drawer>
-            <Paper className={classes.content}>
-                <div className={classes.drawerHeader} />
-                <LoadableTabPanel searches={Object.entries(searches)} />
-            </Paper>
-            <BottomNavigation
-                value={footerValue}
-                onChange={(event, newValue) => {
-                    setFooterValue(newValue);
-                }}
-                showLabels
-                className={classes.footer}
-            >
-                <BottomNavigationAction label="Home" icon={<HomeIcon />} />
-                <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-                <BottomNavigationAction label="Settings" icon={<SettingsIcon />} />
-            </BottomNavigation>
+            <Paper className={classes.content}>{routes[footerIndex]?.value}</Paper>
+            <Box className={classes.footer}>
+                <BottomNavigation
+                    value={footerIndex}
+                    onChange={(event, newValue) => {
+                        setFooterIndex(newValue);
+                    }}
+                    showLabels
+                    className={classes.footer}
+                >
+                    {routes?.map((route) => (
+                        <BottomNavigationAction {...route.props} />
+                    ))}
+                </BottomNavigation>
+            </Box>
         </Box>
     );
 };

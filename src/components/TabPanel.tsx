@@ -1,9 +1,10 @@
-import AppBar from "@material-ui/core/AppBar";
-import Box from "@material-ui/core/Box";
-import { makeStyles, Theme, Tab, Tabs, IconButton } from "@material-ui/core";
+import { Box, AppBar, Tab, Tabs, IconButton } from "@material-ui/core";
 import { Add as AddIcon, Close as CloseIcon } from "@material-ui/icons";
 import React, { useEffect } from "react";
-import { GalleryView } from "./GalleryView";
+import { SearchTab } from "./SearchTab";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import { Image, SiteModel } from "../models";
+import SiteList from "../models/SiteList";
 
 interface TabPageProps {
     index: any;
@@ -24,13 +25,6 @@ export function TabPage(props: React.PropsWithChildren<TabPageProps>) {
             {value === index && <Box p={3}>{children}</Box>}
         </div>
     );
-}
-
-function a11yProps(index: any) {
-    return {
-        id: `scrollable-auto-tab-${index}`,
-        "aria-controls": `scrollable-auto-tabpanel-${index}`,
-    };
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,7 +59,6 @@ export default function TabPanel(props: React.PropsWithChildren<TabPanelProps> |
         setTabs(newTabs);
     };
 
-    // This is really dumb...
     const addTab = (event: any) => {
         const newTab = [`Search ${tabs.length}`, []];
         setTabs([...tabs, newTab]);
@@ -98,7 +91,6 @@ export default function TabPanel(props: React.PropsWithChildren<TabPanelProps> |
                                 </IconButton>
                             }
                             key={`${name}-${index}`}
-                            {...a11yProps(index)}
                             // disableRipple
                             label={name}
                         />
@@ -111,14 +103,13 @@ export default function TabPanel(props: React.PropsWithChildren<TabPanelProps> |
                             </IconButton>
                         }
                         key="new-search-tab"
-                        {...a11yProps("new-search-tab")}
                         disableRipple
                     />
                 </Tabs>
             </AppBar>
             {tabs.map(([name, searchResults], index) => (
                 <TabPage key={`${name}-${index}`} index={index} value={value}>
-                    <GalleryView value={searchResults} />
+                    <SearchTab value={searchResults} />
                 </TabPage>
             ))}
         </div>

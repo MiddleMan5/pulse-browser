@@ -1,4 +1,4 @@
-import { Image, Tag, SiteProps, SiteModel, Query } from "../models/resource.model";
+import { Image, Tag, SiteProps, SiteModel, Query } from "../resource.model";
 import axios from "axios";
 import { FolderOpen } from "@material-ui/icons";
 
@@ -22,6 +22,7 @@ export class LocalSite implements SiteModel {
     protected supportedTags = ["$random"];
 
     public async images(query?: LocalQuery): Promise<Image[]> {
+        return [];
         const queryUri = `${this.props.uri}/v2/list?page=${query?.page ?? 0}&limit=${query?.limit ?? 30}`;
         const resp = await axios.get(queryUri);
         console.log("Got response:", resp);
@@ -36,6 +37,7 @@ export class LocalSite implements SiteModel {
 
     // Returns all supported image tags
     public async tags(query?: LocalQuery): Promise<Tag[]> {
+        return [];
         return this.supportedTags.filter((tag) => (query?.tags && tag in query.tags) || true);
     }
 }
