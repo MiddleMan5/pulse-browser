@@ -36,6 +36,14 @@ export default class MenuBuilder {
                         this.mainWindow.webContents.inspectElement(x, y);
                     },
                 },
+                {
+                    label: "Open dev tools",
+                    click: () => {
+                        if (!this.mainWindow.webContents.isDevToolsOpened()) {
+                            this.mainWindow.webContents.openDevTools();
+                        }
+                    },
+                },
             ]).popup({ window: this.mainWindow });
         });
     }

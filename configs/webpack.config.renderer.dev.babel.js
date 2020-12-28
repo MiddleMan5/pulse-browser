@@ -32,8 +32,6 @@ if (!requiredByDLLConfig && !(fs.existsSync(dllDir) && fs.existsSync(manifest)))
     execSync("npm run postinstall");
 }
 
-const outputFilename = "renderer.dev.js";
-
 export default merge(baseConfig, {
     devtool: "inline-source-map",
 
@@ -41,11 +39,14 @@ export default merge(baseConfig, {
 
     target: "electron-renderer",
 
-    entry: ["core-js", "regenerator-runtime/runtime", require.resolve("../src/index.tsx")],
+    entry: {
+        main: ["core-js", "regenerator-runtime/runtime", require.resolve(path.join(__dirname, "../src/index.tsx"))],
+        worker: [path.join(__dirname, "../src/worker.ts")],
+    },
 
     output: {
         publicPath: `http://localhost:${port}/dist/`,
-        filename: outputFilename,
+        filename: "[name].renderer.dev.js",
     },
 
     module: {
@@ -240,7 +241,6 @@ export default merge(baseConfig, {
         stats: "errors-only",
         inline: true,
         lazy: false,
-        filename: outputFilename,
         hot: true,
         headers: { "Access-Control-Allow-Origin": "*" },
         contentBase: path.join(__dirname, "..", "dist"),

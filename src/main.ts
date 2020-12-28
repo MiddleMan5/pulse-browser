@@ -11,10 +11,17 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import path from "path";
-import { app, BrowserWindow, shell } from "electron";
+import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log";
 import MenuBuilder from "./menu";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const GLOBAL = global as any;
+
+GLOBAL.splashWorkerWindow = null;
+
+const showWorkerWindow = false;
 
 export default class AppUpdater {
     constructor() {
@@ -38,7 +45,7 @@ if (process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true")
 const installExtensions = async () => {
     const installer = require("electron-devtools-installer");
     const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-    const extensions = ["REACT_DEVELOPER_TOOLS"];
+    const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
 
     return installer
         .default(
@@ -61,13 +68,36 @@ const createWindow = async () => {
         return path.join(RESOURCES_PATH, ...paths);
     };
 
+    function createSplashWorker() {
+        // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
+        GLOBAL.splashWorkerWindow = new BrowserWindow({
+            show: showWorkerWindow,
+            x: 0,
+            y: 0,
+            width: showWorkerWindow ? 800 : 1,
+            height: showWorkerWindow ? 600 : 1,
+            frame: false,
+            webPreferences: {
+                nodeIntegration: true,
+                enableRemoteModule: true,
+            },
+        });
+
+        GLOBAL.splashWorkerWindow.loadURL(`file://${__dirname}/worker.html`);
+    }
+
+    createSplashWorker();
+
     mainWindow = new BrowserWindow({
         show: false,
         width: 1024,
         height: 728,
         icon: getAssetPath("icon.png"),
         webPreferences: {
+            spellcheck: true,
             nodeIntegration: true,
+            webviewTag: true,
+            enableRemoteModule: true,
         },
     });
 
@@ -100,6 +130,50 @@ const createWindow = async () => {
         shell.openExternal(url);
     });
 
+    GLOBAL.splashWorkerWindow.webContents.on("crashed", () => {
+        try {
+            GLOBAL.splashWorkerWindow.close();
+            GLOBAL.splashWorkerWindow = null;
+        } catch (err) {
+            console.warn("Error closing the splash window. " + err);
+        }
+        createSplashWorker();
+    });
+
+    ipcMain.on("worker", (event, arg) => {
+        // console.log('worker event in main.' + arg.result.length);
+        if (mainWindow) {
+            mainWindow.webContents.send(arg.id, arg);
+        }
+    });
+
+    ipcMain.on("setSplashVisibility", (event, arg) => {
+        // worker window needed to be visible for the PDF tmb generation
+        // console.log('worker event in main: ' + arg.visibility);
+        if (GLOBAL.splashWorkerWindow && arg.visibility) {
+            GLOBAL.splashWorkerWindow.show();
+            // arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
+        }
+    });
+
+    ipcMain.on("app-data-path-request", (event) => {
+        event.returnValue = app.getPath("appData"); // eslint-disable-line
+    });
+
+    ipcMain.on("app-version-request", (event) => {
+        event.returnValue = app.getVersion(); // eslint-disable-line
+    });
+
+    ipcMain.on("app-dir-path-request", (event) => {
+        event.returnValue = path.join(__dirname, ""); // eslint-disable-line
+    });
+
+    // ipcMain.on('relaunch-app', reloadApp);
+
+    ipcMain.on("quit-application", () => {
+        app.quit();
+    });
+
     // Remove this if your app does not use auto updates
     // eslint-disable-next-line
     new AppUpdater();
@@ -122,5 +196,7 @@ app.whenReady().then(createWindow).catch(console.log);
 app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) createWindow();
+    if (mainWindow === null) {
+        createWindow();
+    }
 });

@@ -23,8 +23,45 @@ export interface Collection {
     ddoc: string;
 }
 
+// Allows redux storage in PouchDB
+// TODO: Move this somewhere else
+export class PouchReduxStorage {
+    protected db: PouchDB.Database;
+    protected docRevs: { [key: string]: any } = {};
+
+    constructor(db: PouchDB.Database) {
+        this.db = db;
+    }
+
+    async setItem(key: string, value: any) {
+        const doc = JSON.parse(value);
+        const _rev = this.docRevs[key];
+
+        const result = await this.db.put({ _id: key, _rev, doc });
+
+        this.docRevs[key] = result.rev;
+        return result;
+    }
+
+    async getItem(key: string) {
+        const doc = (await this.db.get(key)) as any;
+        this.docRevs[key] = doc._rev;
+        return JSON.stringify(doc?.doc);
+    }
+
+    async removeItem(key: string, value: any) {
+        await this.db.remove({ _id: key, _rev: this.docRevs[key] });
+        delete this.docRevs[key];
+    }
+
+    async getAllKeys() {
+        return Object.keys(this.docRevs);
+    }
+}
+
 export class PulseDatabase {
     protected db = new PouchDB("PulseDB", { adapter: "idb" });
+    public storage = new PouchReduxStorage(this.db);
     protected providedIndexes: IndexOptions[] = [
         {
             name: "images",
@@ -41,6 +78,10 @@ export class PulseDatabase {
         {
             name: "sites",
             fields: ["uri", "name"],
+        },
+        {
+            name: "redux",
+            fields: ["doc"],
         },
     ];
 
@@ -69,9 +110,9 @@ export class PulseDatabase {
     public async collections(): Promise<Collection[]> {
         const { indexes } = await this.db.getIndexes();
         const collections: Collection[] = [];
-        await indexes.forEach(async (index) => {
+        indexes.forEach((index) => {
             const { name, type, ddoc, def } = index;
-            if (ddoc != null && type != "special") {
+            if (ddoc != null && type !== "special") {
                 const fields = def.fields.flatMap((field) => Object.keys(field));
                 collections.push({ name, fields: fields, ddoc });
             }
@@ -87,9 +128,11 @@ export class PulseDatabase {
     // Clear all created indexes
     protected async clearIndexes() {
         const collections = await this.collections();
-        await collections.forEach(async (collection) => {
-            await this.db.deleteIndex(collection);
-        });
+        await Promise.all(
+            collections.map(async (collection) => {
+                return this.db.deleteIndex(collection);
+            })
+        );
     }
 
     protected async initIndexes() {
@@ -101,8 +144,9 @@ export class PulseDatabase {
 
     // Default collections
 
-    public async settings(): Promise<Settings> {
-        return {};
+    public async settings(): Promise<typeof DefaultSettings> {
+        // FIXME: Return current settings
+        return DefaultSettings;
     }
 
     public async sites(): Promise<SiteModel[]> {

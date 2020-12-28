@@ -1,15 +1,7 @@
-import {
-    List,
-    ListItem,
-    ListItemSecondaryAction,
-    ListItemText,
-    ListSubheader,
-    Switch,
-    TextField,
-    Tooltip,
-} from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import React from "react";
+import React, { useState } from "react";
+import SettingsDialog from "../components/dialogs/settings/SettingsDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -23,61 +15,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-export interface SettingProps {
-    key: string;
-    label: string;
-    value: string | number | boolean;
-    description?: string;
-}
-
-export function Setting(props: React.PropsWithChildren<SettingProps>) {
+export default function SettingsPanel() {
     const classes = useStyles();
+    const [open, setOpen] = useState(true);
 
-    const inputElement = (function () {
-        switch (typeof props.value) {
-            case "number":
-            case "string":
-                return (
-                    <TextField
-                        value={props.value}
-                        inputProps={{ "aria-labelledby": `switch-list-label-${props.key}` }}
-                    />
-                );
-            case "boolean":
-                return (
-                    <Switch
-                        edge="end"
-                        checked={props.value as boolean}
-                        inputProps={{ "aria-labelledby": `switch-list-label-${props.key}` }}
-                    />
-                );
-            default:
-                return undefined;
-        }
-    })();
+    const onClose = () => {
+        setOpen(false);
+    };
 
     return (
-        <ListItem className={classes.setting}>
-            <Tooltip title={props.description ?? props.key} aria-label={props.key}>
-                <ListItemText id={`switch-list-label-${props.key}`} primary={props.label} />
-            </Tooltip>
-            <ListItemSecondaryAction>{inputElement}</ListItemSecondaryAction>
-        </ListItem>
-    );
-}
-
-export interface SettingsPanelProps {}
-
-export default function SettingsPanel(props: React.PropsWithChildren<SettingsPanelProps> | any) {
-    const classes = useStyles();
-
-    return (
-        <List subheader={<ListSubheader>Settings</ListSubheader>} className={classes.root}>
-            <Setting key="test1" label="Test Option 1" value={true} description="This is a test option" />
-            <Setting key="test2" label="Test Option 2" value={false} description="This is a test option" />
-            <Setting key="test3" label="Test Option 3" value={true} description="This is a test option" />
-            <Setting key="test4" label="Test Option 4" value="Hello" description="This is a test option" />
-            <Setting key="test5" label="Test Option 5" value={1} description="This is a test option" />
-        </List>
+        <Box className={classes.root}>
+            <SettingsDialog open={open} onClose={onClose} />;
+        </Box>
     );
 }

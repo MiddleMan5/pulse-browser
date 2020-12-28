@@ -10,6 +10,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     for (const type of ["chrome", "node", "electron"]) {
         const typeStr = type as keyof NodeJS.ProcessVersions;
-        replaceText(`${type}-version`, process.versions[typeStr]);
+        replaceText(`${type}-version`, process.versions[typeStr] ?? "UNKNOWN");
     }
 });

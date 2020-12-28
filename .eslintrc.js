@@ -4,9 +4,9 @@ module.exports = {
         "no-console": "off",
         "global-require": "off",
         "import/no-dynamic-require": "off",
-        "@typescript-eslint/naming-convention": "warn",
+        "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-unused-vars": "warn",
-        "@typescript-eslint/no-unused-vars/no-explicit-any": "warn",
+        "@typescript-eslint/no-explicit-any": "warn",
         "no-constant-condition": "warn",
     },
 };

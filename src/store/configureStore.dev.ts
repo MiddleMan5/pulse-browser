@@ -1,29 +1,11 @@
-/**
- * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License (version 3) as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- */
-
-import { createStore, applyMiddleware, compose } from "redux";
-import { persistStore } from "redux-persist";
+import { applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import { createLogger } from "redux-logger";
 import rootReducer from "../reducers";
 import onlineListener from "../services/onlineListener";
+import { configureStore as configureStoreToolkit } from "@reduxjs/toolkit";
 
-const configureStore = (initialState) => {
+const configureStore = (initialState: any) => {
     // Redux Configuration
     const middleware = [];
     const enhancers = [];
@@ -58,17 +40,9 @@ const configureStore = (initialState) => {
     const enhancer = composeEnhancers(...enhancers);
 
     // Create Store
-    const store = createStore(rootReducer, initialState, enhancer);
+    const store = configureStoreToolkit({ reducer: rootReducer, preloadedState: initialState, enhancers: [enhancer] });
 
     onlineListener(store.dispatch);
-
-    const persistor = persistStore(
-        store
-    ); /* , null, () => {
-    document.dispatchEvent(new Event('storeLoaded'));
-    // store.dispatch(push('/main'));
-    console.log('Store rehydrated.');
-  }); */
 
     if (module.hot) {
         module.hot.accept(
@@ -77,7 +51,7 @@ const configureStore = (initialState) => {
         );
     }
 
-    return { store, persistor };
+    return { store, persistor: undefined };
 };
 
 export default { configureStore };

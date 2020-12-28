@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Theme, ThemeProvider } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
@@ -10,8 +10,8 @@ import LightTheme from "./light.theme";
 
 // TODO: Get babel or webpack to generate this map
 const ThemeList: { [name: string]: Theme } = {
-    DarkTheme,
-    LightTheme,
+    dark: DarkTheme,
+    light: LightTheme,
 };
 
 // Typescript sugar
@@ -20,30 +20,30 @@ type ThemeName = typeof ThemeNames[number];
 
 interface PulseThemeProviderProps {
     // The initial themeName to apply
-    themeName?: ThemeName;
+    themeName: ThemeName;
 }
 
 export const PulseThemeProvider = (props: React.PropsWithChildren<PulseThemeProviderProps>) => {
     const { children } = props;
 
     // Check to see if color scheme requested from browser
-    // TODO: Check this dynamically
+    // TODO: Use this in index/onboarding??
     const prefersLightMode = useMediaQuery("(prefers-color-scheme: light)");
-    const defaultThemeName = prefersLightMode ? "LightTheme" : "DarkTheme";
 
     // State to hold the selected theme name
-    const [themeName, setThemeName] = useState(props?.themeName ?? defaultThemeName);
+    const [themeName, setThemeName] = useState(props?.themeName);
 
     // Theme provider context
     const context = React.createContext({ themeName, setThemeName });
 
-    // Retrieve the active theme type
-    // TODO: useEffect?? Get dynamically
-    const theme = () => ThemeList[themeName];
+    // FIXME: I'm pretty sure none of this is necessary
+    useEffect(() => {
+        setThemeName(props.themeName);
+    }, [props.themeName]);
 
     return (
         <context.Provider value={useContext(context)}>
-            <ThemeProvider theme={theme()}>{children}</ThemeProvider>
+            <ThemeProvider theme={ThemeList[themeName]}>{children}</ThemeProvider>
         </context.Provider>
     );
 };

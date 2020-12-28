@@ -5,10 +5,15 @@
 import path from "path";
 import webpack from "webpack";
 
-let externals = {};
-
 export default {
-    externals: [...Object.keys(externals || {})],
+    externals: [
+        {
+            fsevents: "require('fsevents')",
+        },
+        {
+            fswin: "require('fswin')",
+        },
+    ],
 
     module: {
         rules: [

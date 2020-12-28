@@ -1,5 +1,3 @@
-/* eslint global-require: off, import/no-extraneous-dependencies: off */
-
 const developmentEnvironments = ["development", "test"];
 
 const developmentPlugins = [require("@babel/plugin-transform-runtime")];
@@ -72,6 +70,14 @@ module.exports = (api) => {
                     camel2DashComponentName: false,
                 },
                 "icons",
+            ],
+            [
+                "module-resolver",
+                {
+                    alias: {
+                        "-": "./src",
+                    },
+                },
             ],
         ],
     };

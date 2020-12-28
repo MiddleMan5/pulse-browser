@@ -2,7 +2,7 @@ import path from "path";
 import { execSync } from "child_process";
 import fs from "fs";
 
-dependencies = {};
+const dependencies = {};
 
 const nodeModulesPath = path.join(__dirname, "../src/node_modules");
 

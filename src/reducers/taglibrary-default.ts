@@ -1,0 +1,150 @@
+// import AppConfig from '../config';
+import { v1 as uuidv1 } from "uuid";
+
+export default [
+    {
+        title: "ToDo Workflow",
+        uuid: "50567824-16ba-4fda-a128-3865df97472f",
+        color: "#008000",
+        textcolor: "#ffffff",
+        children: [
+            {
+                id: uuidv1(),
+                title: "done",
+                type: "plain",
+                color: "#008000",
+                textcolor: "#ffffff",
+                keyBinding: "",
+            },
+            {
+                id: uuidv1(),
+                title: "next",
+                type: "plain",
+                color: "#008000",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                title: "maybe",
+                type: "plain",
+                color: "#008000",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                title: "waiting",
+                type: "plain",
+                color: "#008000",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "todo",
+                color: "#008000",
+                textcolor: "#ffffff",
+            },
+        ],
+    },
+    {
+        title: "Common Tags",
+        uuid: "17882854-44a7-4b2d-a2b1-b022846ac41d",
+        color: "#008000",
+        textcolor: "#ffffff",
+        children: [
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "book",
+                color: "#008000",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "paper",
+                color: "#008000",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "article",
+                color: "#008000",
+                textcolor: "#ffffff",
+            },
+        ],
+    },
+    {
+        title: "Priorities",
+        uuid: "e21711da-ee78-4c83-bae3-e0007fe426a3",
+        color: "#008000",
+        textcolor: "#ffffff",
+        children: [
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "high",
+                color: "#ff7537",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "medium",
+                color: "#ffad46",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "low",
+                color: "#7bd148",
+                textcolor: "#ffffff",
+            },
+        ],
+    },
+    {
+        title: "Ratings",
+        uuid: "5cf5173d-738c-4413-9386-3f4411aa7b64",
+        color: "#ffcc24",
+        textcolor: "#ffffff",
+        children: [
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "1star",
+                color: "#ffcc24",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "2star",
+                color: "#ffcc24",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "3star",
+                color: "#ffcc24",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "4star",
+                color: "#ffcc24",
+                textcolor: "#ffffff",
+            },
+            {
+                id: uuidv1(),
+                type: "plain",
+                title: "5star",
+                color: "#ffcc24",
+                textcolor: "#ffffff",
+            },
+        ],
+    },
+] as any;
