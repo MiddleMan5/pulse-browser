@@ -25,9 +25,14 @@ import {
     Storage as StorageIcon,
 } from "@material-ui/icons";
 import clsx from "clsx";
-import React from "react";
-import { DatabasePanel, SettingsPanel, TabPanel } from "../components";
+import React, { useEffect } from "react";
+import SearchPage from "./SearchPage";
+import SettingsPage from "./SettingsPage";
+import { DatabasePanel } from "../components";
 import SiteList from "../models/SiteList";
+import { RootState } from "../reducers";
+import { useDispatch, useSelector } from "react-redux";
+import { ipcService } from "../services/ipc.service";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -112,15 +117,17 @@ interface NavigationMapItem {
     value: JSX.Element;
 }
 
-interface HomePageProps {}
-export const HomePage: React.FC<HomePageProps> = () => {
+export const HomePage: React.FC = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const {} = useSelector((state: RootState) => state.settings);
+
     const [open, setOpen] = React.useState(false);
     const [footerIndex, setFooterIndex] = React.useState(0);
     const [routes] = React.useState<NavigationMapItem[]>([
         {
             props: { key: "home", title: "Home", icon: <HomeIcon /> },
-            value: <TabPanel />,
+            value: <SearchPage />,
         },
         {
             props: { key: "favorites", title: "Favorites", icon: <FavoriteIcon /> },
@@ -132,7 +139,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
         },
         {
             props: { key: "settings", title: "Settings", icon: <SettingsIcon /> },
-            value: <SettingsPanel />,
+            value: <SettingsPage />,
         },
     ]);
 

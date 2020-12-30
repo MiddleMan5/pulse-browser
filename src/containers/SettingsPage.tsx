@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-export default function SettingsPanel() {
+export default function SettingsPage() {
     const classes = useStyles();
     const [open, setOpen] = useState(true);
 

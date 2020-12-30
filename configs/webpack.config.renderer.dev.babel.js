@@ -41,11 +41,11 @@ export default merge(baseConfig, {
 
     entry: {
         main: ["core-js", "regenerator-runtime/runtime", require.resolve(path.join(__dirname, "../src/index.tsx"))],
-        worker: [path.join(__dirname, "../src/worker.ts")],
+        worker: [require.resolve(path.join(__dirname, "../src/worker.ts"))],
     },
 
     output: {
-        publicPath: `http://localhost:${port}/dist/`,
+        publicPath,
         filename: "[name].renderer.dev.js",
     },
 

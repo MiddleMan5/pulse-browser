@@ -104,7 +104,7 @@ export default class ElectronIO {
             nImage = nativeImage.createFromDataURL(TrayIcon2x);
         }
 
-        if (this.tsTray && this.tsTray.destroy) {
+        if (this?.tsTray?.destroy) {
             this.tsTray.destroy();
         }
         this.tsTray = new Tray(nImage);

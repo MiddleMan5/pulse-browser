@@ -11,7 +11,6 @@ type State = {
     bootstrapped: boolean;
 };
 
-
 // FIXME: Actually implement
 export class PersistGate extends PureComponent<Props, State> {
     render() {

@@ -45,12 +45,16 @@ export class PicsumSite implements SiteModel {
             if (uri in this.imageCache && this.imageCache[uri]) {
                 return this.imageCache[uri];
             }
-            const resp = await axios.get(uri, { timeout: this.timeout });
-            const imageData = resp.data;
+            const imageResp = await axios.get(uri, { timeout: this.timeout });
+            const imageData = imageResp.data;
             this.imageCache[uri] = imageData;
             return imageData;
         };
-        return imageList.map((data) => new Image(data.download_url!, () => resolveImage(data.download_url!)));
+
+        return imageList.map((data) => {
+            const newImage: Image = { uri: data.download_url!, value: () => resolveImage(data.download_url!) };
+            return newImage;
+        });
     }
 
     // Returns all supported image tags

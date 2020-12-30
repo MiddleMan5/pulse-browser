@@ -10,7 +10,6 @@ import RemoveIcon from "@material-ui/icons/RemoveCircle";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import ColorPickerDialog from "../ColorPickerDialog";
-import { findAvailableExtensions } from "../../../reducers/app";
 import { sortBy } from "../../../utils/misc";
 import i18n from "../../../services/i18n";
 import TransparentBackground from "../../TransparentBackground";
@@ -77,8 +76,9 @@ class SettingsFileTypes extends Component<Props, State> {
         isComponentActive: false,
     };
 
+    // FIXME: Get available extensions
     UNSAFE_componentWillMount() {
-        this.setState({ availableExtensions: findAvailableExtensions() });
+        this.setState({ availableExtensions: [] });
     }
 
     componentDidMount = () => {

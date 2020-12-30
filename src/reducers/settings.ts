@@ -1,4 +1,3 @@
-
 import AppConfig from "../config";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -79,7 +78,7 @@ export interface SupportedKeybinding {
 }
 
 const defaultSettings: SettingsState = {
-    settingsVersion: 3,
+    settingsVersion: 0,
     isLoading: false,
     error: null,
     userId: null,
@@ -287,11 +286,11 @@ const defaultSettings: SettingsState = {
             viewer: "@pulsebrowser/mhtml-viewer",
             color: "",
         },
-        // {
-        //   type: 'epub',
-        //   viewer: '@pulsebrowser/ebook-viewer',
-        //   color: ''
-        // },
+        {
+            type: "epub",
+            viewer: "@pulsebrowser/ebook-viewer",
+            color: "",
+        },
         {
             type: "flac",
             viewer: "@pulsebrowser/media-player",
@@ -564,6 +563,7 @@ const defaultSettings: SettingsState = {
     ],
 };
 
+// TODO: Load initial state from storage
 const settingsSlice = createSlice({
     name: "settings",
     initialState: defaultSettings,
@@ -661,9 +661,9 @@ const settingsSlice = createSlice({
         setLastPublishedVersion(state: SettingsState, action: PayloadAction<string>) {
             // TODO: Coerce to semver
             state.lastPublishedVersion = action.payload;
-        }
+        },
     },
 });
 
-export const actions = settingsSlice.actions
+export const actions = settingsSlice.actions;
 export default settingsSlice.reducer;
