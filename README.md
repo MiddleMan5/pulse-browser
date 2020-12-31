@@ -37,3 +37,27 @@ Built with Electron, React, Redux, PouchDB, and a million other minor tools
 ---
 
 ![Color Selection](docs/color.png)
+
+## Development
+
+I haven't added full cross-platform development support, so assuming you're running a linux machine and have vscode set up, or want to troubleshoot npm scripts, all you have to do to start working is run the following:
+
+```shell
+git clone https://github.com/MiddleMan5/pulse-browser.git
+
+cd pulse-browser
+
+npm install
+```
+
+### To run from vscode:
+
+Open the project and press the `F5` key
+
+### To run from shell:
+
+```shell
+npm run start
+```
+
+Hot reloading is enabled, so you can keep the app running as you develop.
