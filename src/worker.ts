@@ -1,5 +1,5 @@
 import { IpcRendererEvent, ipcRenderer, remote } from "electron";
-import { isRenderer } from "./utils";
+import { isRenderer } from "./util";
 import { execSync } from "child_process";
 import {defineChannel, IpcRequest} from "./services/ipc.service"
 export * from "./services/ipc.service"
@@ -11,9 +11,8 @@ export const channels = [
 
 const registerWorkerChannels = (workerName: string) => {
     channels.forEach((channel) => {
-        // TODO: Standardize this naming scheme somewhere
+        
         // Wrap channel handlers with event unpacker
-
         const handleRequest = async (event: IpcRendererEvent, request: IpcRequest) => {
             console.log("Unpacking args:", request?.args);
             const args = request?.args ?? [];
@@ -25,6 +24,7 @@ const registerWorkerChannels = (workerName: string) => {
             }
         };
 
+        // TODO: Standardize this naming scheme somewhere
         ipcRenderer.on(`${workerName}.${channel.name}`, (event, request) => {
             handleRequest(event, request).catch(console.error);
         });
@@ -35,6 +35,6 @@ const registerWorkerChannels = (workerName: string) => {
 if (isRenderer()) {
     // TODO: Standardize this somewhere, it would be *lovely* to use a human-readable name
     const workerName = `${remote.getCurrentWindow().id}`;
-    console.log("Got window:", workerName);
+    console.log("Registering worker:", workerName);
     registerWorkerChannels(workerName);
 }

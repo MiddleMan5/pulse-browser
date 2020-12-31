@@ -1,5 +1,5 @@
 import { IpcRenderer, ipcRenderer } from "electron";
-import { isRenderer } from "../utils";
+import { isRenderer } from "../util";
 
 export interface IpcRequest<ArgsType = undefined> {
     responseChannel?: string;
@@ -29,15 +29,16 @@ export class IpcService {
 
     // FIXME: get return type from channel
     public send(channel: string, ...args: any[]): Promise<unknown> {
-        // // Autogenerate request channel
+        // Autogenerate request channel
         const responseChannel = `${channel}_response_${new Date().getTime()}`;
         // return result;
         const result = new Promise((resolve) => {
             this.ipcRenderer.once(responseChannel, (event, response) => resolve(response));
         });
-        ipcRenderer.send(channel, { responseChannel, args });
+        this.ipcRenderer.send(channel, { responseChannel, args });
         return result;
     }
 }
 
+// Export ipcService object only to renderer processes
 export const ipcService = (isRenderer() ? new IpcService() : undefined) as IpcService;

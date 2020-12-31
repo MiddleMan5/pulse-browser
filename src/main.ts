@@ -41,7 +41,7 @@ export class Worker {
     // FIXME: This implies one channel per worker
     constructor() {
         this.window = new BrowserWindow({
-            show: true,
+            show: false,
             x: 0,
             y: 0,
             width: 1024,
