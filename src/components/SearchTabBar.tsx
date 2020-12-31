@@ -5,8 +5,9 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
-import { Tag } from "../models";
+import { Tag, Query } from "../models";
 import { pulseDatabase } from "../store/PulseDatabase";
+import { SearchOptions } from "../store/reducers/searches";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -74,7 +75,7 @@ export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButt
     };
 
     const handleClose = (event: React.MouseEvent<EventTarget>) => {
-        if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+        if (anchorRef?.current?.contains(event.target as HTMLElement)) {
             return;
         }
         setOpen(false);
@@ -115,7 +116,9 @@ export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButt
 }
 
 export interface SearchTabBarProps {
-    onSubmit: () => void;
+    onSubmit: (query: Query) => void;
+    options?: SearchOptions;
+    query?: Query;
 }
 
 export function SearchTabBar(props?: SearchTabBarProps) {
@@ -123,6 +126,7 @@ export function SearchTabBar(props?: SearchTabBarProps) {
 
     const [open, setOpen] = React.useState(false);
     const [tagList, setTagList] = React.useState<Tag[]>([]);
+    const [queryTags, setQueryTags] = React.useState<Tag[]>([]);
     const loading = open && tagList.length === 0;
 
     // Load tags from sites
@@ -151,10 +155,9 @@ export function SearchTabBar(props?: SearchTabBarProps) {
         }
     }, [open]);
 
-    const onSubmit = () => {
-        console.log("GOT SUBMIT");
+    const onSubmit = (query: Query) => {
         if (props?.onSubmit) {
-            props.onSubmit();
+            props.onSubmit(query);
         }
     };
 
@@ -171,6 +174,7 @@ export function SearchTabBar(props?: SearchTabBarProps) {
                 onClose={() => {
                     setOpen(false);
                 }}
+                onChange={(event, value) => setQueryTags(value)}
                 loading={loading}
                 options={tagList}
                 noOptionsText="No tags loaded"
@@ -201,7 +205,7 @@ export function SearchTabBar(props?: SearchTabBarProps) {
                 )}
             />
             <Box className={classes.buttonBar}>
-                <Button onClick={onSubmit}>Search</Button>
+                <Button onClick={() => onSubmit({ tags: queryTags, page: 1, limit: 1000 })}>Search</Button>
                 <OptionsMenuButton />
             </Box>
         </div>

@@ -1,8 +1,9 @@
-import { AppBar, Box, Grid, IconButton, Tab, Tabs } from "@material-ui/core";
+import { AppBar, Box, Grid, IconButton, Tab, Tabs, Paper } from "@material-ui/core";
 import { createStyles, fade, makeStyles, Theme } from "@material-ui/core/styles";
 import { Add as AddIcon, Close as CloseIcon } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { siteList } from "../../models/SiteList";
 import { ImageCard } from "../../components/ImageCard";
 import { SearchTabBar } from "../../components/SearchTabBar";
 import { Image, Query } from "../../models";
@@ -92,55 +93,35 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface SearchTabProps {
-    title?: string;
-    value?: Image[];
+    searchId: string;
 }
 
-export function SearchTab(props?: SearchTabProps) {
+export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
     const classes = useStyles();
 
-    // Searches
-    const [pageNum, setPageNum] = useState(1);
-    const [queryStr, setQueryStr] = useState("");
-    const [query, setQuery] = useState<Query>({});
-    const [results, setResults] = useState<Image[]>(props?.value ?? []);
-    const [runCount, setRunCount] = useState(0);
-
-    // Initialize Options
-    useEffect(() => {
-        // TODO: Site-defined search tokens
-        const queryTokens = queryStr.split(" ");
-        const newQuery = { tags: [...queryTokens], page: pageNum, limit: undefined };
-        setQuery(newQuery);
-    }, [queryStr, pageNum]);
-
-    // Update query object
-    useEffect(() => {
-        // TODO: Site-defined search tokens
-        const queryTokens = queryStr.split(" ");
-        const newQuery = { tags: [...queryTokens], page: pageNum, limit: undefined };
-        setQuery(newQuery);
-    }, [queryStr, pageNum]);
-
-    // Perform search with current query
-    async function performSearch() {
-        // Copy current query
-        const siteQuery = { ...query };
-    }
+    const dispatch = useDispatch();
+    const { updateSearch } = rootActions.searches;
+    const searchState = useSelector((state: RootState) => state.searches.entities[searchId]!);
+    const { id, results, query, options } = searchState;
 
     // TODO: This is dumb
-    function submitSearch() {
-        performSearch().catch(console.error);
+    function submitSearch(newQuery: Query) {
+        dispatch(updateSearch({ id, changes: { query: { ...newQuery } } }));
+        (async () => {
+            const images = [];
+            for (const site of siteList) {
+                console.log("Searching:", site.name);
+                const siteImages = await site.images(newQuery);
+                images.push(...siteImages);
+            }
+            dispatch(updateSearch({ id, changes: { results: images } }));
+        })().catch((err) => console.error(err));
+        console.log("Results:", results);
     }
-
-    // Re-render on result updates
-    useEffect(() => {
-        console.log("Rendering results...");
-    }, [results, runCount]);
 
     return (
         <Box className={classes.root}>
-            <SearchTabBar onSubmit={submitSearch} />
+            <SearchTabBar query={query} options={options} onSubmit={submitSearch} />
             <Grid
                 container
                 direction="row-reverse"
@@ -157,60 +138,41 @@ export function SearchTab(props?: SearchTabProps) {
             </Grid>
         </Box>
     );
-}
-
-export interface TabPageProps {
-    index: number;
-    value: number;
-    key: string;
-}
-export const TabPage: React.FC<TabPageProps> = (props) => {
-    const { children, value, index, key } = props;
-
-    return (
-        <div
-            role="tabpage"
-            hidden={value !== index}
-            id={`scrollable-auto-tabpage-${index}`}
-            aria-labelledby={`scrollable-auto-tab-${index}`}
-            key={key}
-        >
-            {value === index && <Box p={3}>{children}</Box>}
-        </div>
-    );
 };
 
 export const SearchPage: React.FC = () => {
     const classes = useStyles();
 
     const dispatch = useDispatch();
+    const { addSearch, removeSearch } = rootActions.searches;
     const searches = useSelector((state: RootState) => state.searches.entities);
-    //const {} = useSelector((state: RootState) => state.searches);
-    const [value, setValue] = useState(0);
+    const [activeTab, setActiveTab] = useState<number | string | undefined>(undefined);
 
-    // Build tabs from active searches
-    const tabs = Object.entries(searches).map(([id, search]) => {
-        const result: [string, Image[]] = [id, search?.results ?? []];
-        return result;
-    });
+    // Get ids for searches
+    const searchList = Object.keys(searches);
 
-    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setValue(newValue);
-    };
-
-    const removeTab = (index: number) => {
-        dispatch(rootActions.searches.removeSearch(index));
+    const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+        setActiveTab(newValue);
     };
 
     const addTab = (event: any) => {
-        dispatch(rootActions.searches.addSearch({ id: `${tabs.length}`, tags: [], options: {}, results: [] }));
+        const result = dispatch(addSearch({}));
+        const searchId = result!.payload!.id!;
+        console.log("Got new tab:", searchId);
+    };
+
+    const removeTab = (id: string) => {
+        if (activeTab === id) {
+            setActiveTab(0);
+        }
+        dispatch(removeSearch(id));
     };
 
     return (
         <div className={classes.panel}>
             <AppBar position="static" color="default">
                 <Tabs
-                    value={value}
+                    value={activeTab}
                     className={classes.tabBar}
                     onChange={handleChange}
                     indicatorColor="primary"
@@ -218,26 +180,29 @@ export const SearchPage: React.FC = () => {
                     scrollButtons="auto"
                     aria-label="scrollable auto tabs "
                 >
-                    {tabs.map(([id, searchResults], index) => (
+                    {searchList.map((id, index) => (
                         <Tab
                             component="div"
                             className={classes.tab}
+                            value={id}
                             icon={
                                 <IconButton
                                     size="small"
                                     onClick={() => {
-                                        removeTab(index);
+                                        removeTab(id);
                                     }}
                                 >
                                     <CloseIcon />
                                 </IconButton>
                             }
                             key={`${id}-${index}`}
-                            // disableRipple
-                            label={id}
+                            label={(searches[id]?.query?.tags?.length ? searches[id]!.query.tags! : ["search"]).join(
+                                " "
+                            )}
                         />
                     ))}
                     <Tab
+                        value={0}
                         component="div"
                         icon={
                             <IconButton size="small" onClick={addTab}>
@@ -249,10 +214,10 @@ export const SearchPage: React.FC = () => {
                     />
                 </Tabs>
             </AppBar>
-            {tabs.map(([name, searchResults], index) => (
-                <TabPage key={`${name}-${index}`} index={index} value={value}>
-                    <SearchTab value={searchResults} />
-                </TabPage>
+            {searchList.map((id) => (
+                <Paper key={id} hidden={id !== activeTab}>
+                    <SearchTab key={id} searchId={id} />
+                </Paper>
             ))}
         </div>
     );

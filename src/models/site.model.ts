@@ -1,4 +1,4 @@
-import { Tag, AddressableResourceProps } from "./resource.model";
+import { Tag, AddressableResource } from "./resource.model";
 import { Image } from "./image.model";
 
 export interface Query {
@@ -7,7 +7,8 @@ export interface Query {
     limit?: number;
 }
 
-export interface SiteProps extends AddressableResourceProps {
+export interface SiteProps {
+    uri: string;
     // Authentication/Authorization information
     auth?: object;
     // Image data to show when browsing available sites

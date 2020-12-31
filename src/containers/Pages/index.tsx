@@ -1,43 +1,11 @@
-import React, { useEffect, useState } from "react";
-import {
-    BottomNavigation,
-    BottomNavigationAction,
-    BottomNavigationActionProps,
-    Box,
-    Divider,
-    Drawer,
-    IconButton,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Paper,
-    Toolbar,
-    Typography,
-    Tab,
-    Tabs,
-    TabPage,
-    AppBar,
-    Theme,
-} from "@material-ui/core";
+import { Paper, Tab, Tabs, Theme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import {
-    ChevronLeft as ChevronLeftIcon,
-    DonutLarge as DonutLargeIcon,
-    Favorite as FavoriteIcon,
-    Home as HomeIcon,
-    Menu as MenuIcon,
-    Settings as SettingsIcon,
-    Storage as StorageIcon,
-    Search as SearchIcon,
-} from "@material-ui/icons";
-import clsx from "clsx";
-import HomePage from "./HomePage";
-import SettingsPage from "./SettingsPage";
-import SearchPage from "./SearchPage";
-import FavoritesPage from "./FavoritesPage";
+import { Search as SearchIcon, Settings as SettingsIcon } from "@material-ui/icons";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { rootActions, RootState } from "../../store/reducers";
+import SearchPage from "./SearchPage";
+import SettingsPage from "./SettingsPage";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -75,12 +43,6 @@ export const RootPage: React.FC = () => {
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         dispatch(literallyUpdateEverything({ rootPageIndex: newValue }));
     };
-
-    console.log(rootPageIndex);
-
-    useEffect(() => {
-        console.log("Index changed");
-    }, [rootPageIndex]);
 
     return (
         <Paper className={classes.root}>

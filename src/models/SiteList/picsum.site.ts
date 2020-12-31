@@ -1,4 +1,4 @@
-import { Image, Tag, SiteProps, SiteModel, Query } from "../resource.model";
+import { Image, Tag, SiteProps, SiteModel, Query } from "../";
 import axios from "axios";
 import PlanetIcon from "../../../resources/icons/planet.png";
 
@@ -52,7 +52,7 @@ export class PicsumSite implements SiteModel {
         };
 
         return imageList.map((data) => {
-            const newImage: Image = { uri: data.download_url!, value: () => resolveImage(data.download_url!) };
+            const newImage: Image = { uri: data.download_url!, value: () => resolveImage(data.download_url!), tags: [], id: data.download_url! };
             return newImage;
         });
     }

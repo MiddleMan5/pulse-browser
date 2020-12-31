@@ -82,7 +82,7 @@ export default function SidePanel() {
             <Paper className={classes.iconBar}>
                 <List>
                     {tabs.map((tab, index) => (
-                        <Tooltip title={tab.label}>
+                        <Tooltip title={tab.label} key={index}>
                             <ListItem
                                 button
                                 key={index}

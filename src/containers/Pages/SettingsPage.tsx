@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: theme.palette.background.paper,
         },
         listItem: {
-            width: "100%",
+            margin: theme.spacing(1),
         },
         colorDialogButton: {},
     })
@@ -86,7 +86,7 @@ export default function SettingsPage() {
                     <ListItemText primary="Language" />
                     <Select
                         data-tid="settingsSetLanguage"
-                        value={language.title}
+                        value={language.iso}
                         //onChange={(event: any) => this.props.setLanguage(event.target.value)}
                         input={<Input id="languageSelector" />}
                     >
