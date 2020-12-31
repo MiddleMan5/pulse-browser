@@ -13,7 +13,6 @@ The initial concept for this app came when I most recently upgraded my computer.
 -   Persistent State
 -   Embedded Database
 -   Theming
--   Plugins
 
 ### Tech Demos
 
@@ -21,5 +20,6 @@ Examples of the following features exist in the app, but are planned to undergo 
 
 -   Language Support
 -   Multi-process IPC
+-   Compiled Plugins
 
 Built with Electron, React, Redux, PouchDB, and a million other minor tools
