@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ThemeName } from "../../themes";
-import {Language, FileAssociation, Keybinding} from "../../models";
+import { Language, FileAssociation, Keybinding } from "../../models";
 
 export interface SettingsState {
     theme: ThemeName;
