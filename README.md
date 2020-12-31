@@ -50,7 +50,8 @@ npm install
 
 ### Run (vscode):
 
-Open the project and press the `F5` key
+Open the project and press the `F5` key to run the `Start Webpack Dev` task
+
 
 ### Run (shell):
 
