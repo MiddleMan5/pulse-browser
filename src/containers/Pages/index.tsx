@@ -62,9 +62,7 @@ export const RootPage: React.FC = () => {
     const classes = useStyles();
 
     const pages = [
-        { label: "Home", icon: <HomeIcon />, element: <HomePage /> },
         { label: "Search", icon: <SearchIcon />, element: <SearchPage /> },
-        { label: "Favorites", icon: <FavoriteIcon />, element: <FavoritesPage /> },
         { label: "Settings", icon: <SettingsIcon />, element: <SettingsPage /> },
     ];
     const [tabValue, setTabValue] = useState(0);

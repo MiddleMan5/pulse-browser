@@ -15,7 +15,10 @@ export type IpcChannelInterface<ArgsType extends any[], ReturnType> = {
 };
 
 // Typescript type inferencing
-export function defineChannel<ArgsType extends any[], ReturnType>(name: string, handle: IpcHandler<ArgsType, ReturnType>) {
+export function defineChannel<ArgsType extends any[], ReturnType>(
+    name: string,
+    handle: IpcHandler<ArgsType, ReturnType>
+) {
     return { name, handle };
 }
 

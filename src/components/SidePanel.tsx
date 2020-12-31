@@ -47,7 +47,8 @@ const useStyles = makeStyles((theme: Theme) =>
             whiteSpace: "nowrap",
             flexDirection: "row",
             width: drawerWidth,
-            backgroundColor: theme.palette.primary.dark
+            backgroundColor: theme.palette.primary.dark,
+            zIndex: theme.zIndex.drawer,
         },
     })
 );
@@ -56,10 +57,10 @@ export default function SidePanel() {
     const classes = useStyles();
 
     const tabs = [
-        { label: "Home", icon: <HomeIcon /> },
-        { label: "Search", icon: <SearchIcon /> },
-        { label: "Favorites", icon: <FavoriteIcon /> },
-        { label: "Settings", icon: <SettingsIcon /> },
+        { label: "Home", icon: <HomeIcon />, content: undefined },
+        { label: "Search", icon: <SearchIcon />, content: undefined },
+        { label: "Favorites", icon: <FavoriteIcon />, content: undefined },
+        { label: "Settings", icon: <SettingsIcon />, content: undefined },
     ];
 
     // TODO: Find a stock component that tracks selected state (Tab?)
@@ -100,6 +101,7 @@ export default function SidePanel() {
                         {tabs[activeTab]?.label}
                     </Typography>
                     <Divider />
+                    {tabs[activeTab]?.content ?? <div />}
                 </Paper>
             )}
         </Paper>

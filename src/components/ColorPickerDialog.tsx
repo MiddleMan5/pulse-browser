@@ -5,8 +5,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { withStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
-import { SketchPicker } from "react-color";
-import i18n from "../../services/i18n";
+import { SketchPicker, ColorResult } from "react-color";
 
 const presetColors = [
     "#ffffff",
@@ -66,7 +65,7 @@ const ColorPickerDialog = (props: Props) => {
         props.onClose();
     }
 
-    function handleChangeComplete(newColor: any) {
+    function handleChangeComplete(newColor: ColorResult) {
         setColor(newColor.rgb);
         setColorHex(newColor.hex);
     }
@@ -78,7 +77,7 @@ const ColorPickerDialog = (props: Props) => {
             keepMounted
             scroll="paper"
             onKeyDown={(event) => {
-                if (event.key === "Enter" || event.keyCode === 13) {
+                if (event.key === "Enter") {
                     event.preventDefault();
                     event.stopPropagation();
                     onConfirm();
@@ -87,7 +86,7 @@ const ColorPickerDialog = (props: Props) => {
                 }
             }}
         >
-            <DialogTitle data-tid="colorPickerDialogTitle">{i18n.t("core:colorPickerDialogTitle")}</DialogTitle>
+            <DialogTitle data-tid="colorPickerDialogTitle">Tag Color</DialogTitle>
             <DialogContent
                 style={{
                     marginLeft: "auto",
@@ -96,18 +95,17 @@ const ColorPickerDialog = (props: Props) => {
             >
                 <SketchPicker
                     className={props.classes.noBorder}
-                    name="color"
                     presetColors={props.presetColors ? props.presetColors : presetColors}
-                    color={color || props.color}
+                    color={color ?? props.color}
                     onChangeComplete={handleChangeComplete}
                 />
             </DialogContent>
             <DialogActions>
                 <Button data-tid="colorPickerCloseDialog" onClick={props.onClose} color="primary">
-                    {i18n.t("core:cancel")}
+                    Cancel
                 </Button>
                 <Button onClick={onConfirm} data-tid="colorPickerConfirm" color="primary">
-                    {i18n.t("core:ok")}
+                    Ok
                 </Button>
             </DialogActions>
         </Dialog>

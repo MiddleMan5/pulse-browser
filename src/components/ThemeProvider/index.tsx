@@ -15,8 +15,8 @@ const ThemeList: { [name: string]: Theme } = {
 };
 
 // Typescript sugar
-const ThemeNames = Object.keys(ThemeList);
-type ThemeName = typeof ThemeNames[number];
+export const ThemeNames = Object.keys(ThemeList);
+export type ThemeName = typeof ThemeNames[number];
 
 interface PulseThemeProviderProps {
     // The initial themeName to apply

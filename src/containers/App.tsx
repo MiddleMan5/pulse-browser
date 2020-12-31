@@ -23,11 +23,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const App: React.FC = () => {
     const classes = useStyles();
-    const { currentTheme } = useSelector((state: RootState) => state.settings);
+    const { theme } = useSelector((state: RootState) => state.settings);
 
     return (
         <Box className={classes.root}>
-            <PulseThemeProvider themeName={currentTheme}>
+            <PulseThemeProvider themeName={theme}>
                 <CssBaseline />
                 <Box className={classes.layoutRoot}>
                     <SidePanel />

@@ -1,17 +1,19 @@
 import { IpcRendererEvent, ipcRenderer, remote } from "electron";
 import { isRenderer } from "./util";
 import { execSync } from "child_process";
-import {defineChannel, IpcRequest} from "./services/ipc.service"
-export * from "./services/ipc.service"
+import { defineChannel, IpcRequest } from "./services/ipc.service";
+export * from "./services/ipc.service";
 
 export const channels = [
     defineChannel("systemInfo", () => execSync("uname -a").toString()),
-    defineChannel("echo", (msg: string) => {console.log("Got message:", msg); return msg}),
+    defineChannel("echo", (msg: string) => {
+        console.log("Got message:", msg);
+        return msg;
+    }),
 ];
 
 const registerWorkerChannels = (workerName: string) => {
     channels.forEach((channel) => {
-        
         // Wrap channel handlers with event unpacker
         const handleRequest = async (event: IpcRendererEvent, request: IpcRequest) => {
             console.log("Unpacking args:", request?.args);
