@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ThemeName } from "../../themes";
+import {Language, FileAssociation, Keybinding} from "../../models";
 
 export interface SettingsState {
     theme: ThemeName;
@@ -10,25 +11,6 @@ export interface SettingsState {
     fileAssociations: FileAssociation[];
     // TODO: Color type
     tagColor: string;
-}
-
-export type Editor = "@pulsebrowser/html-editor" | "@pulsebrowser/json-editor" | "@pulsebrowser/text-editor";
-
-export interface FileAssociation {
-    type: string;
-    viewer: string;
-    color?: string;
-    editor?: Editor;
-}
-
-export interface Language {
-    iso: string;
-    title: string;
-}
-
-export interface Keybinding {
-    name: string;
-    command: string;
 }
 
 const defaultSettings: SettingsState = {

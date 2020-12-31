@@ -18,7 +18,8 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { rootActions, RootState } from "../../store/reducers";
 import ColorPickerDialog from "../../components/ColorPickerDialog";
-import { ThemeNames, ThemeName } from "../../themes";
+import { ThemeNames } from "../../themes";
+import { LanguageList, LanguageMap } from "../../util";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function SettingsPage() {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const { setTheme, setTagColor } = rootActions.settings;
+    const { setTheme, setTagColor, setLanguage } = rootActions.settings;
     const { theme, language, tagColor } = useSelector((state: RootState) => state.settings);
     const [colorDialogOpen, setColorDialogOpen] = useState(false);
 
@@ -83,14 +84,17 @@ export default function SettingsPage() {
                     />
                 </ListItem>
                 <ListItem className={classes.listItem}>
-                    <ListItemText primary="Language" />
+                    <ListItemText
+                        primary={language.model?.language ?? "Language"}
+                        style={{ textTransform: "capitalize" }}
+                    />
                     <Select
                         data-tid="settingsSetLanguage"
                         value={language.iso}
-                        //onChange={(event: any) => this.props.setLanguage(event.target.value)}
+                        onChange={(event) => dispatch(setLanguage(LanguageMap[event.target.value as string]))}
                         input={<Input id="languageSelector" />}
                     >
-                        {[language].map((lng) => (
+                        {LanguageList.map((lng) => (
                             <MenuItem key={lng.iso} value={lng.iso}>
                                 {lng.title}
                             </MenuItem>
