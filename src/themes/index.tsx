@@ -1,28 +1,26 @@
 import React from "react";
-import { Theme, ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles";
+import { Theme, ThemeProvider as MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 
-// FIXME: Themes don't seem to be applying properly
+const ThemeMap: { [name: string]: Theme } = {};
 
-// TODO: Bundle themes from json files in directory? (webpack)
-import DarkTheme from "./dark.theme";
-import LightTheme from "./light.theme";
-
-// TODO: Get babel or webpack to generate this map
-const ThemeList: { [name: string]: Theme } = {
-    dark: DarkTheme,
-    light: LightTheme,
-};
-
+// TODO: Bundle themes from json files in directory?
+// TODO: Generate dynamically
+export const ThemeNames = ["dark-blue", "dark", "hacker", "light", "red-rover"];
 // Typescript sugar
-export const ThemeNames = Object.keys(ThemeList);
 export type ThemeName = typeof ThemeNames[number];
+
+// Load exported themeOptions from every listed theme file
+export const ThemeList = ThemeNames.map((name) => {
+    return { [name]: createMuiTheme(require(`./${name}.theme`).themeOptions) };
+});
+Object.assign(ThemeMap, ...ThemeList);
 
 export const StoreThemeProvider: React.FC = ({ children }) => {
     const { theme } = useSelector((state: RootState) => state.settings);
 
-    return <MuiThemeProvider theme={ThemeList[theme]}>{children}</MuiThemeProvider>;
+    return <MuiThemeProvider theme={ThemeMap[theme]}>{children}</MuiThemeProvider>;
 };
 
 export default ThemeList;

@@ -4,15 +4,21 @@ export const themeOptions: ThemeOptions = {
     palette: {
         type: "dark",
         primary: {
-            main: "#90caf9",
+            main: "#ff8f00",
         },
         secondary: {
-            main: "#f48fb1",
+            main: "#f50057",
         },
         background: {
-            default: "#212121",
-            paper: "#424242",
+            default: "#310000",
+            paper: "#731010",
         },
+    },
+    typography: {
+        fontFamily: "Do Hyeon",
+    },
+    shape: {
+        borderRadius: 16,
     },
 };
 

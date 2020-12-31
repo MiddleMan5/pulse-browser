@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { Tag, Query } from "../models";
-import { pulseDatabase } from "../store/PulseDatabase";
+import { pulseDatabase } from "../store/database";
 import { SearchOptions } from "../store/reducers/searches";
 
 const useStyles = makeStyles((theme: Theme) =>
