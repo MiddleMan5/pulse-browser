@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     BottomNavigation,
     BottomNavigationAction,
@@ -36,6 +36,8 @@ import HomePage from "./HomePage";
 import SettingsPage from "./SettingsPage";
 import SearchPage from "./SearchPage";
 import FavoritesPage from "./FavoritesPage";
+import { useDispatch, useSelector } from "react-redux";
+import { rootActions, RootState } from "../../store/reducers";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -60,26 +62,35 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const RootPage: React.FC = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+    // FIXME: I'm tired
+    const { literallyUpdateEverything } = rootActions.location;
+    const { rootPageIndex } = useSelector((state: RootState) => state.location);
 
     const pages = [
         { label: "Search", icon: <SearchIcon />, element: <SearchPage /> },
         { label: "Settings", icon: <SettingsIcon />, element: <SettingsPage /> },
     ];
-    const [tabValue, setTabValue] = useState(0);
 
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setTabValue(newValue);
+        dispatch(literallyUpdateEverything({ rootPageIndex: newValue }));
     };
+
+    console.log(rootPageIndex);
+
+    useEffect(() => {
+        console.log("Index changed");
+    }, [rootPageIndex]);
 
     return (
         <Paper className={classes.root}>
             {pages.map((page, index) => (
-                <Paper key={index} hidden={index !== tabValue} className={classes.page}>
+                <Paper key={index} hidden={index !== rootPageIndex} className={classes.page}>
                     {page.element}
                 </Paper>
             ))}
             <Tabs
-                value={tabValue}
+                value={rootPageIndex}
                 onChange={handleChange}
                 variant="fullWidth"
                 indicatorColor="primary"
