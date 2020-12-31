@@ -26,7 +26,7 @@ Examples of the following features exist in the app, but are planned to undergo 
 
 Built with Electron, React, Redux, PouchDB, and a million other minor tools
 
-# UI
+## UI Examples
 
 ![Theme Support](docs/themes.png)
 
