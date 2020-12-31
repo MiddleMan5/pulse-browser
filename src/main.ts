@@ -15,10 +15,10 @@ import MenuBuilder from "./menu";
 import { IpcRequest, channels } from "./worker";
 import url from "url";
 
-// Source: https://blog.logrocket.com/electron-ipc-response-request-architecture-with-typescript/
+// Get full path to public/ file
+const publicResource = (...src: string[]) => path.join(__dirname, "..", "public", ...src);
 
-// TODO: The webworker must construct the script to register channels IN THE OTHER WINDOW
-// TODO: Using a seperate browser window allows us to import native modules
+// Source: https://blog.logrocket.com/electron-ipc-response-request-architecture-with-typescript/
 
 /* Structure example:
 main: {
@@ -35,6 +35,7 @@ main: {
 // Note: channels should be unique (implies no load balancing)
 */
 
+// Using a seperate browser window for worker processes allows us to import native modules
 export class Worker {
     protected window?: BrowserWindow;
 
@@ -59,13 +60,13 @@ export class Worker {
         this.window
             .loadURL(
                 url.format({
-                    pathname: path.join(__dirname, "worker.html"),
+                    pathname: publicResource("worker.html"),
                     protocol: "file:",
                     slashes: true,
                 })
             )
             .then(() => this.init())
-            .catch(console.error);
+            .catch((err) => console.error(err));
     }
 
     // FIXME: get return type from channel
@@ -98,7 +99,7 @@ export class Worker {
                                 event.sender.send(responseChannel, value);
                             }
                         })
-                        .catch(console.error);
+                        .catch((err) => console.error(err));
                 }
             });
         });
@@ -126,21 +127,23 @@ export class Main {
         // TODO: Probably can get rid of this for now
         log.transports.file.level = "info";
         autoUpdater.logger = log;
-        autoUpdater.checkForUpdatesAndNotify().catch(console.error);
+        autoUpdater.checkForUpdatesAndNotify().catch((err) => console.error(err));
 
         // Event Handlers
 
         // Initialize app window
-        app.whenReady().then(() => {
-            this.init(config).catch(console.error);
-        });
+        app.whenReady()
+            .then(() => {
+                this.init(config).catch((err) => console.error(err));
+            })
+            .catch((err) => console.error(err));
 
         // Re-open window
         app.on("activate", () => {
             // On macOS it's common to re-create a window in the app when the
             // dock icon is clicked and there are no other windows open.
             if (this.mainWindow === null) {
-                this.init(config).catch(console.error);
+                this.init(config).catch((err) => console.error(err));
             }
         });
 
@@ -195,7 +198,15 @@ export class Main {
             });
 
             // TODO: I'd love to get rid of html files entirely
-            this.mainWindow.loadURL(`file://${__dirname}/index.html`).catch(console.error);
+            this.mainWindow
+                .loadURL(
+                    url.format({
+                        pathname: publicResource("index.html"),
+                        protocol: "file:",
+                        slashes: true,
+                    })
+                )
+                .catch((err) => console.error(err));
 
             this.mainWindow.on("ready-to-show", () => {
                 if (this.mainWindow) {
@@ -216,9 +227,9 @@ export class Main {
             menuBuilder.buildMenu();
 
             // Open urls in the user's browser
-            this.mainWindow.webContents.on("new-window", (event, url) => {
+            this.mainWindow.webContents.on("new-window", (event, linkUrl) => {
                 event.preventDefault();
-                shell.openExternal(url).catch(console.error);
+                shell.openExternal(linkUrl).catch((err) => console.error(err));
             });
 
             // Start web workers
@@ -227,5 +238,7 @@ export class Main {
     }
 }
 
+const nodeEnv = process.env?.NODE_ENV === "development" ? "development" : "production";
+
 // Start main process
-new Main({ nodeEnv: "development", resourcePath: "../resources" });
+new Main({ nodeEnv: nodeEnv, resourcePath: publicResource() });

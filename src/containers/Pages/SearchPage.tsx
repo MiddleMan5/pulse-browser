@@ -104,7 +104,7 @@ export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
     const searchState = useSelector((state: RootState) => state.searches.entities[searchId]!);
     const { id, results, query, options } = searchState;
 
-    // TODO: This is dumb
+    // TODO: Handle site updates with workers
     function submitSearch(newQuery: Query) {
         dispatch(updateSearch({ id, changes: { query: { ...newQuery } } }));
         (async () => {
@@ -172,7 +172,7 @@ export const SearchPage: React.FC = () => {
         <div className={classes.panel}>
             <AppBar position="static" color="default">
                 <Tabs
-                    value={activeTab}
+                    value={activeTab ?? 0}
                     className={classes.tabBar}
                     onChange={handleChange}
                     indicatorColor="primary"

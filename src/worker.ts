@@ -28,7 +28,7 @@ const registerWorkerChannels = (workerName: string) => {
 
         // TODO: Standardize this naming scheme somewhere
         ipcRenderer.on(`${workerName}.${channel.name}`, (event, request) => {
-            handleRequest(event, request).catch(console.error);
+            handleRequest(event, request).catch((err) => console.error(err));
         });
     });
 };

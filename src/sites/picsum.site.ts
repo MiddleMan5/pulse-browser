@@ -1,6 +1,6 @@
 import { Image, Tag, SiteProps, SiteModel, Query } from "../models";
 import axios from "axios";
-import PlanetIcon from "../../../resources/icons/planet.png";
+import PlanetIcon from "../../public/icons/planet.png";
 
 export interface PicsumQuery extends Query {}
 

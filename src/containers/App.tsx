@@ -1,17 +1,15 @@
-import { CssBaseline, Container, Box, Theme } from "@material-ui/core";
-import { makeStyles, createStyles } from "@material-ui/styles";
+import { Box, Theme } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/styles";
 import React from "react";
-import { useSelector } from "react-redux";
-import { PulseThemeProvider } from "../components";
-import { RootState } from "../store/reducers";
-
 import SidePanel from "../components/SidePanel";
 import Pages from "./Pages";
+import { PulseThemeProvider } from "../components";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reducers";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        root: {},
-        layoutRoot: {
+        root: {
             display: "flex",
             height: "100vh",
             width: "100vw",
@@ -24,17 +22,13 @@ const useStyles = makeStyles((theme: Theme) =>
 const App: React.FC = () => {
     const classes = useStyles();
     const { theme } = useSelector((state: RootState) => state.settings);
-
     return (
-        <Box className={classes.root}>
-            <PulseThemeProvider themeName={theme}>
-                <CssBaseline />
-                <Box className={classes.layoutRoot}>
-                    <SidePanel />
-                    <Pages />
-                </Box>
-            </PulseThemeProvider>
-        </Box>
+        <PulseThemeProvider themeName={theme}>
+            <Box className={classes.root}>
+                <SidePanel />
+                <Pages />
+            </Box>
+        </PulseThemeProvider>
     );
 };
 
