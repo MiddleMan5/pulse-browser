@@ -3,7 +3,7 @@ import { createStyles, fade, makeStyles, Theme } from "@material-ui/core/styles"
 import { Add as AddIcon, Close as CloseIcon } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { siteList } from "../../models/SiteList";
+import { siteList } from "../../sites";
 import { ImageCard } from "../../components/ImageCard";
 import { SearchTabBar } from "../../components/SearchTabBar";
 import { Image, Query } from "../../models";

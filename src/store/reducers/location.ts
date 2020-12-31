@@ -5,7 +5,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const defaultLocation = {
     rootPageIndex: 0,
-}
+};
 type LocationState = typeof defaultLocation;
 
 const locationSlice = createSlice({

@@ -1,7 +1,7 @@
 import { Tag, Image, SiteModel, Query } from "../models";
 import PouchDB from "pouchdb-browser";
 import PouchDBFind from "pouchdb-find";
-import siteList from "../models/SiteList";
+import siteList from "../sites";
 
 // Load mongo-like (mango) query plugin
 PouchDB.plugin(PouchDBFind);

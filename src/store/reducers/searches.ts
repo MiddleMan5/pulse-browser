@@ -1,4 +1,4 @@
-import {v4 as uuid} from "uuid";
+import { v4 as uuid } from "uuid";
 import { Tag, Image, Query } from "../../models";
 import { createSlice, PayloadAction, createEntityAdapter, EntityState } from "@reduxjs/toolkit";
 
@@ -6,7 +6,7 @@ export interface SearchOptions {}
 
 export interface Search {
     id: string;
-    query: Query,
+    query: Query;
     results: Image[];
     options?: SearchOptions;
 }
@@ -30,7 +30,7 @@ const searchesSlice = createSlice({
                 },
                 results: [],
                 options: {},
-            }
+            };
             searchAdapter.addOne(state, Object.assign(searchDefault, action?.payload ?? {}));
         },
         removeSearch: searchAdapter.removeOne,
