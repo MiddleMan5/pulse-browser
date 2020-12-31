@@ -3,9 +3,7 @@ import { createStyles, makeStyles } from "@material-ui/styles";
 import React from "react";
 import SidePanel from "../components/SidePanel";
 import Pages from "./Pages";
-import { PulseThemeProvider } from "../components";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/reducers";
+import { StoreThemeProvider } from "../components";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -21,14 +19,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const App: React.FC = () => {
     const classes = useStyles();
-    const { theme } = useSelector((state: RootState) => state.settings);
+
     return (
-        <PulseThemeProvider themeName={theme}>
+        <StoreThemeProvider>
             <Box className={classes.root}>
                 <SidePanel />
                 <Pages />
             </Box>
-        </PulseThemeProvider>
+        </StoreThemeProvider>
     );
 };
 

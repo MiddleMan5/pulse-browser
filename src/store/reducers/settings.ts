@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ThemeName } from "../../components/ThemeProvider";
+import { ThemeName } from "../../themes";
 
 export interface SettingsState {
     theme: ThemeName;

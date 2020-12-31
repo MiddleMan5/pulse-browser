@@ -18,7 +18,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { rootActions, RootState } from "../../store/reducers";
 import ColorPickerDialog from "../../components/ColorPickerDialog";
-import { ThemeNames, ThemeName } from "../../components/ThemeProvider";
+import { ThemeNames, ThemeName } from "../../themes";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
