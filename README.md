@@ -1,5 +1,7 @@
 # Pulse Browser
 
+![Home Page](docs/home.png)
+
 An app I wrote to flex my frontend development skills and solve a problem I have:
 
 ```text
@@ -23,3 +25,15 @@ Examples of the following features exist in the app, but are planned to undergo 
 -   Compiled Plugins
 
 Built with Electron, React, Redux, PouchDB, and a million other minor tools
+
+# UI
+
+![Theme Support](docs/themes.png)
+
+---
+
+![Preview](docs/preview.png)
+
+---
+
+![Color Selection](docs/color.png)
