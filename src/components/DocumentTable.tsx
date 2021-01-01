@@ -35,7 +35,9 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({ documents }) => {
                 <TableHead>
                     <TableRow>
                         {documentKeys.map((key) => (
-                            <TableCell key={key} align="right">{key}</TableCell>
+                            <TableCell key={key} align="right">
+                                {key}
+                            </TableCell>
                         ))}
                     </TableRow>
                 </TableHead>

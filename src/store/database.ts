@@ -1,9 +1,9 @@
-import { Tag, Image, SiteModel, Query } from "../models";
-import PouchDB from 'pouchdb-browser';
+import { Tag, Image, Site, Query } from "../models";
+import PouchDB from "pouchdb-browser";
 import PouchDBFind from "pouchdb-find";
 import siteList from "../sites";
 
-export type AnyDocument = PouchDB.Core.ExistingDocument<{[key: string]: any}>;
+export type AnyDocument = PouchDB.Core.ExistingDocument<{ [key: string]: any }>;
 
 // Load mongo-like (mango) query plugin
 PouchDB.plugin(PouchDBFind);
@@ -74,17 +74,15 @@ export class PulseDatabase {
         buildCollection("tags", ["tag"]),
     ];
 
-
     protected collectionFields = ["collection"];
     protected collectionIndex: IndexOptions = {
         name: "collections",
         fields: this.collectionFields,
     };
 
-
     public async createCollection(collection: Omit<Collection, "ddoc">) {
         const newCollection = buildCollection(collection.name, collection.fields);
-        await this.db.createIndex({index: newCollection});
+        await this.db.createIndex({ index: newCollection });
     }
 
     // Remove all documents in a collection
@@ -93,11 +91,14 @@ export class PulseDatabase {
         const name = typeof collection === "string" ? collection : collection.name;
         const match = collections.find((c) => c.name === name);
         if (match) {
-            const collectionDocs = await this.db.find({selector: {
-                "collection": match.name,
-            }, fields: ["_id", "_rev"]});
+            const collectionDocs = await this.db.find({
+                selector: {
+                    collection: match.name,
+                },
+                fields: ["_id", "_rev"],
+            });
             // This is literally the worst database...
-            await this.db.bulkDocs(collectionDocs.docs.map(doc => ({...doc,  _deleted: true})));
+            await this.db.bulkDocs(collectionDocs.docs.map((doc) => ({ ...doc, _deleted: true })));
         } else {
             console.log(`No such collection ${name} found; nothing to do`);
         }
@@ -106,24 +107,24 @@ export class PulseDatabase {
     // Get all collections names in database
     public async collectionNames(): Promise<string[]> {
         const requiredFields = this.collectionFields;
-        const selector = Object.assign({}, ...requiredFields.map(f => ({[f]: {"$gt": ""}})))
-        const result = await this.db.find({fields: requiredFields, selector })
-        const names =  result.docs.map(doc => (doc as any).collection);
+        const selector = Object.assign({}, ...requiredFields.map((f) => ({ [f]: { $gt: "" } })));
+        const result = await this.db.find({ fields: requiredFields, selector });
+        const names = result.docs.map((doc) => (doc as any).collection);
         // Get only unique collection names
-        return [... new Set(names)];
+        return [...new Set(names)];
     }
 
-    public async collections(): Promise<Collection[]>{
+    public async collections(): Promise<Collection[]> {
         // Copy provided collections
-        const collectionMap = Object.assign({}, ...this.providedCollections.map(c => ({[c.name]: c})));
+        const collectionMap = Object.assign({}, ...this.providedCollections.map((c) => ({ [c.name]: c })));
         const providedCollectionNames = Object.keys(collectionMap);
         const foundCollectionNames = await this.collectionNames();
 
         // If a collection definition wasn't found (new runtime collection defined) generate a new definition
-        for(const name of foundCollectionNames){
-            if(!providedCollectionNames.includes(name)){
+        for (const name of foundCollectionNames) {
+            if (!providedCollectionNames.includes(name)) {
                 // FIXME: Generate collection definition from all common keys
-                continue
+                continue;
             }
         }
         return Object.values(collectionMap);
@@ -158,19 +159,22 @@ export class PulseDatabase {
         return DefaultSettings;
     }
 
-    public async sites(): Promise<SiteModel[]> {
+    public async sites(): Promise<Site[]> {
         return siteList;
     }
 
-    public async images(query: Query = {}): Promise<Image[]> {
+    public async images(query: Query = {}, siteNames: string[] | undefined = undefined): Promise<[Site, Image[]][]> {
         const sites = await this.sites();
-        const siteImageLists = await Promise.all(
-            sites.map(async (site) => {
-                return site.images(query);
-            })
-        );
-        const siteImages = siteImageLists.flatMap((images) => images);
-        return siteImages;
+        const pendingResults: Promise<[Site, Image[]]>[] = [];
+        for (const site of sites) {
+            // undefined should match all sites
+            if (siteNames == null || siteNames?.includes(site.name)) {
+                const pending = Promise.all([site, site.images(query)]);
+                pendingResults.push(pending);
+            }
+        }
+        const results = await Promise.all(pendingResults);
+        return results;
     }
 
     public async tags(query: Query = {}): Promise<Tag[]> {

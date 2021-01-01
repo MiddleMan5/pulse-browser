@@ -1,5 +1,18 @@
 /* eslint-disable no-use-before-define */
-import { Box, Button, ClickAwayListener, FormGroup, Grow, Paper, Popper, Switch, Chip } from "@material-ui/core";
+import {
+    Box,
+    Button,
+    ClickAwayListener,
+    FormGroup,
+    Grow,
+    Paper,
+    Popper,
+    Switch,
+    Chip,
+    List,
+    ListItem,
+    ListItemText,
+} from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -8,6 +21,7 @@ import React from "react";
 import { Tag, Query } from "../models";
 import { pulseDatabase } from "../store/database";
 import { SearchOptions } from "../store/reducers/searches";
+import { siteList } from "../sites";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,9 +60,15 @@ export function SearchOption(props: SearchOptionProps) {
     }
 }
 
-interface OptionState {
-    option1: boolean;
-}
+// FIXME: Redux
+const defaultOptionState = {
+    sites: siteList.map((s) => ({
+        label: s.name,
+        checked: true,
+    })),
+};
+
+export type OptionState = typeof defaultOptionState;
 
 export interface OptionsMenuButtonProps {
     onSubmit?: () => void;
@@ -57,7 +77,8 @@ export interface OptionsMenuButtonProps {
 export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButtonProps>) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [state, setState] = React.useState<OptionState>({ option1: true });
+    // FIXME: Redux
+    const [state, setState] = React.useState<OptionState>(defaultOptionState);
     const anchorRef = React.useRef<HTMLButtonElement>(null);
 
     // return focus to the button when we transitioned from !open -> open
@@ -71,7 +92,7 @@ export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButt
     }, [open]);
 
     const handleToggle = () => {
-        setOpen((prevOpen) => !prevOpen);
+        setOpen((openState) => !openState);
     };
 
     const handleClose = (event: React.MouseEvent<EventTarget>) => {
@@ -100,11 +121,26 @@ export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButt
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
                                 <FormGroup>
-                                    <Switch
-                                        size="small"
-                                        checked={state.option1}
-                                        onChange={(e) => setState({ ...state, option1: e.target.checked })}
-                                    />
+                                    <List>
+                                        {state.sites.map((siteSwitch, index) => {
+                                            const setSiteSwitch = (checked: boolean) => {
+                                                if (siteSwitch.checked !== checked) {
+                                                    state.sites[index].checked = checked;
+                                                    setState(state);
+                                                }
+                                            };
+                                            return (
+                                                <ListItem>
+                                                    <ListItemText primary={siteSwitch.label} />
+                                                    <Switch
+                                                        size="small"
+                                                        checked={siteSwitch.checked}
+                                                        onChange={(e) => setSiteSwitch(e.target.checked)}
+                                                    />
+                                                </ListItem>
+                                            );
+                                        })}
+                                    </List>
                                 </FormGroup>
                             </ClickAwayListener>
                         </Paper>
@@ -115,13 +151,13 @@ export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButt
     );
 }
 
-export interface SearchTabBarProps {
+export interface SearchBarProps {
     onSubmit: (query: Query) => void;
     options?: SearchOptions;
     query?: Query;
 }
 
-export function SearchTabBar(props?: SearchTabBarProps) {
+export function SearchBar(props?: SearchBarProps) {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
@@ -142,7 +178,7 @@ export function SearchTabBar(props?: SearchTabBarProps) {
             if (active) {
                 setTagList(tags);
             }
-        })();
+        })().catch((err) => console.error("Failed to get tag list:", err));
 
         return () => {
             active = false;
@@ -205,7 +241,7 @@ export function SearchTabBar(props?: SearchTabBarProps) {
                 )}
             />
             <Box className={classes.buttonBar}>
-                <Button onClick={() => onSubmit({ tags: queryTags, page: 1, limit: 1000 })}>Search</Button>
+                <Button onClick={() => onSubmit({ tags: queryTags, page: 1, limit: 10 })}>Search</Button>
                 <OptionsMenuButton />
             </Box>
         </div>

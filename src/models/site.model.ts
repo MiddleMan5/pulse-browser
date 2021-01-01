@@ -15,7 +15,7 @@ export interface SiteProps {
     icon?: any;
 }
 
-export interface SiteModel {
+export interface Site {
     // Site model configuration
     readonly props: SiteProps;
 

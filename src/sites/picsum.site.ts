@@ -1,10 +1,10 @@
-import { Image, Tag, SiteProps, SiteModel, Query } from "../models";
+import { Image, Tag, SiteProps, Site, Query } from "../models";
 import axios from "axios";
 import PlanetIcon from "../../public/icons/planet.png";
 
 export interface PicsumQuery extends Query {}
 
-export class PicsumSite implements SiteModel {
+export class PicsumSite implements Site {
     public get name() {
         return this.constructor.name;
     }
@@ -41,7 +41,7 @@ export class PicsumSite implements SiteModel {
         // TODO: Validate response
         const imageList = resp.data as any[];
         const resolveImage = async (uri: string) => {
-            // TODO: Provide global image caching in SiteModel
+            // TODO: Provide global image caching in Site
             if (uri in this.imageCache && this.imageCache[uri]) {
                 return this.imageCache[uri];
             }

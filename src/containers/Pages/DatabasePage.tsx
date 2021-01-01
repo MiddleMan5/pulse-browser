@@ -39,9 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         backgroundColor: theme.palette.background.paper,
     },
     collection: {},
-    collectionDialog: {
-
-    },
+    collectionDialog: {},
 }));
 
 export interface CollectionItemProps {

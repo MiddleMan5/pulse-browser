@@ -1,13 +1,26 @@
-import { AppBar, Box, Grid, IconButton, Tab, Tabs, Paper } from "@material-ui/core";
+import {
+    AppBar,
+    Box,
+    Grid,
+    IconButton,
+    Tab,
+    Tabs,
+    Paper,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+} from "@material-ui/core";
 import { createStyles, fade, makeStyles, Theme } from "@material-ui/core/styles";
 import { Add as AddIcon, Close as CloseIcon } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { siteList } from "../../sites";
 import { ImageCard } from "../../components/ImageCard";
-import { SearchTabBar } from "../../components/SearchTabBar";
-import { Image, Query } from "../../models";
+import { SearchBar } from "../../components/SearchBar";
+import { Image, Query, Site } from "../../models";
 import { rootActions, RootState } from "../../store/reducers";
+import { pulseDatabase } from "../../store/database";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -82,12 +95,22 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
+        siteList: {
+            flexDirection: "column",
+        },
+        siteGroup: {
+            color: theme.palette.primary.light,
+            display: "inline",
+        },
         gallery: {
             marginTop: theme.spacing(1),
             marginBottom: theme.spacing(1),
         },
         buttonBar: {
             position: "fixed",
+        },
+        activeTab: {
+            marginTop: theme.spacing(2),
         },
     })
 );
@@ -98,44 +121,51 @@ interface SearchTabProps {
 
 export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
     const classes = useStyles();
+    const [siteResults, setSiteResults] = useState<[Site, Image[]][]>([]);
 
     const dispatch = useDispatch();
     const { updateSearch } = rootActions.searches;
     const searchState = useSelector((state: RootState) => state.searches.entities[searchId]!);
-    const { id, results, query, options } = searchState;
+    const { id, query, options } = searchState;
 
     // TODO: Handle site updates with workers
     function submitSearch(newQuery: Query) {
-        dispatch(updateSearch({ id, changes: { query: { ...newQuery } } }));
-        (async () => {
-            const images = [];
-            for (const site of siteList) {
-                console.log("Searching:", site.name);
-                const siteImages = await site.images(newQuery);
-                images.push(...siteImages);
-            }
-            dispatch(updateSearch({ id, changes: { results: images } }));
-        })().catch((err) => console.error(err));
-        console.log("Results:", results);
+        dispatch(updateSearch({ id, changes: { query: newQuery } }));
     }
+
+    useEffect(() => {
+        (async () => {
+            const siteImages = await pulseDatabase.images(query);
+            console.log("Got images:", siteImages);
+            setSiteResults(siteImages);
+        })().catch((err) => console.error(err));
+    }, [query]);
 
     return (
         <Box className={classes.root}>
-            <SearchTabBar query={query} options={options} onSubmit={submitSearch} />
-            <Grid
-                container
-                direction="row-reverse"
-                justify="center"
-                alignItems="flex-start"
-                spacing={2}
-                className={classes.gallery}
-            >
-                {results.map((img) => (
-                    <Grid key={img.uri} item>
-                        <ImageCard image={img.uri} title={img.uri} />
-                    </Grid>
+            <SearchBar query={query} options={options} onSubmit={submitSearch} />
+
+            <List className={classes.siteList}>
+                {siteResults.map(([site, images]) => (
+                    <ListItem divider className={classes.siteGroup}>
+                        <ListItemText primary={site.name} />
+                        <Grid
+                            container
+                            direction="row-reverse"
+                            justify="center"
+                            alignItems="flex-start"
+                            spacing={2}
+                            className={classes.gallery}
+                        >
+                            {images.map((img) => (
+                                <Grid key={img.uri} item>
+                                    <ImageCard image={img.uri} title={img.uri} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </ListItem>
                 ))}
-            </Grid>
+            </List>
         </Box>
     );
 };
@@ -145,8 +175,9 @@ export const SearchPage: React.FC = () => {
 
     const dispatch = useDispatch();
     const { addSearch, removeSearch } = rootActions.searches;
-    const searches = useSelector((state: RootState) => state.searches.entities);
+
     const [activeTab, setActiveTab] = useState<number | string | undefined>(undefined);
+    const searches = useSelector((state: RootState) => state.searches.entities);
 
     // Get ids for searches
     const searchList = Object.keys(searches);
@@ -214,11 +245,13 @@ export const SearchPage: React.FC = () => {
                     />
                 </Tabs>
             </AppBar>
-            {searchList.map((id) => (
-                <Paper key={id} hidden={id !== activeTab}>
-                    <SearchTab key={id} searchId={id} />
-                </Paper>
-            ))}
+            {searchList.map((id) =>
+                id === activeTab ? (
+                    <Paper key={id} hidden={id !== activeTab} className={classes.activeTab}>
+                        <SearchTab key={id} searchId={id} />
+                    </Paper>
+                ) : undefined
+            )}
         </div>
     );
 };
