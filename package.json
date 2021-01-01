@@ -2,7 +2,7 @@
   "name": "pulse-browser",
   "version": "1.0.0",
   "description": "An app for managing remote and local images",
-  "repository": {},
+  "repository": {"url": "https://github.com/MiddleMan5/pulse-browser.git"},
   "scripts": {
     "build": "concurrently 'npm run build:main' 'npm run build:renderer'",
     "build:main": "NODE_ENV=production webpack --config ./configs/webpack.config.main.prod.babel.js",
@@ -135,7 +135,7 @@
     "uuid": "^8.3.2"
   },
   "main": ".eslintrc.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": ["tag", "image", "electron"],
+  "author": "Quinn Mikelson",
+  "license": "GPLv3"
 }

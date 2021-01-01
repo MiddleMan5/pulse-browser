@@ -63,3 +63,9 @@ npm run start
 ```
 
 Hot reloading is enabled, so you can keep the app running as you develop.
+
+## License
+
+This project is free to use and distribute for all non-commercial purposes.
+
+Licensed under the [GNU GPLv3](https://spdx.org/licenses/GPL-3.0-or-later.html) license. A copy of this license is included; see [COPYING](./COPYING)
