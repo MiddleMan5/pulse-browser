@@ -23,3 +23,6 @@ export const LanguageMap = Object.assign(
 );
 
 export const isRenderer = () => process && (process as any)?.type === "renderer";
+
+
+export const noOp = (...args: any[]) => ({});

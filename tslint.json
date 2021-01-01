@@ -1,5 +1,5 @@
 {
-    "extends": ["tslint:latest"],
+    "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
     "rules": {
         "forin": false,
         "max-line-length": false,
@@ -7,6 +7,11 @@
         "no-string-literal": false,
         "no-unnecessary-initializer": false,
         "object-literal-key-quotes": false,
-        "object-literal-sort-keys": false
-    }
+        "object-literal-sort-keys": false,
+        "no-submodule-imports": false,
+        "no-console": false
+    },
+    "jsRules": {
+        "no-console": false
+      }
 }

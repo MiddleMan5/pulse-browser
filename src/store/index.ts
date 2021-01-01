@@ -10,7 +10,8 @@ const logger = createLogger({
 });
 
 // Store state changes in database
-const dbKey = "applicationState";
+const stateVersion = 0;
+const dbKey = `${stateVersion}.state`;
 const reduxStore = pulseDatabase.storage;
 const persistor: Middleware = ({ getState }) => {
     return (next) => (action) => {

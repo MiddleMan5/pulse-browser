@@ -1,7 +1,9 @@
 import { Tag, Image, SiteModel, Query } from "../models";
-import PouchDB from "pouchdb-browser";
+import PouchDB from 'pouchdb-browser';
 import PouchDBFind from "pouchdb-find";
 import siteList from "../sites";
+
+export type AnyDocument = PouchDB.Core.ExistingDocument<{[key: string]: any}>;
 
 // Load mongo-like (mango) query plugin
 PouchDB.plugin(PouchDBFind);
@@ -36,7 +38,8 @@ export class PouchReduxStorage {
     async setItem(key: string, value: any) {
         const doc = JSON.parse(value);
         const _rev = this.docRevs[key];
-        const result = await this.db.put({ _id: key, _rev, doc });
+        const collection = "redux";
+        const result = await this.db.put({ _id: key, _rev, collection, doc });
         this.docRevs[key] = result.rev;
         return result;
     }
@@ -57,39 +60,32 @@ export class PouchReduxStorage {
     }
 }
 
+function buildCollection(name: string, fields: string[]): Collection {
+    const ddoc = `${name}.collection.index`;
+    return { name, fields, ddoc };
+}
+
 export class PulseDatabase {
-    protected db = new PouchDB("PulseDB", { adapter: "idb" });
+    public db = new PouchDB("PulseDB", { adapter: "idb" });
     public storage = new PouchReduxStorage(this.db);
-    protected providedIndexes: IndexOptions[] = [
-        {
-            name: "images",
-            fields: ["tags"],
-        },
-        {
-            name: "tags",
-            fields: ["alias", "value", "sites"],
-        },
-        {
-            name: "settings",
-            fields: ["type", "value"],
-        },
-        {
-            name: "sites",
-            fields: ["uri", "name"],
-        },
-        {
-            name: "redux",
-            fields: ["doc"],
-        },
+    protected providedCollections: Collection[] = [
+        buildCollection("redux", ["doc"]),
+        buildCollection("images", ["id", "uri", "tags"]),
+        buildCollection("tags", ["tag"]),
     ];
+
+
+    protected collectionFields = ["collection"];
+    protected collectionIndex: IndexOptions = {
+        name: "collections",
+        fields: this.collectionFields,
+    };
+
 
     // Get all provided (non-special) collections in database
     public async createCollection(collection: Omit<Collection, "ddoc">) {
-        const ddoc = `${collection.name}.collection.index`;
-        const newCollection = {
-            index: { name: collection.name, fields: collection.fields, ddoc },
-        };
-        await this.db.createIndex(newCollection);
+        const newCollection = buildCollection(collection.name, collection.fields);
+        await this.db.createIndex({index: newCollection});
     }
 
     // Get all provided (non-special) collections in database
@@ -98,29 +94,42 @@ export class PulseDatabase {
         const name = typeof collection === "string" ? collection : collection.name;
         const match = collections.find((c) => c.name === name);
         if (match) {
+            console.log("Deleting index:", match);
             await this.db.deleteIndex(match);
         } else {
             console.log(`No such collection ${name} found; nothing to do`);
         }
     }
 
-    // Get all provided (non-special) collections in database
-    public async collections(): Promise<Collection[]> {
-        const { indexes } = await this.db.getIndexes();
-        const collections: Collection[] = [];
-        indexes.forEach((index) => {
-            const { name, type, ddoc, def } = index;
-            if (ddoc != null && type !== "special") {
-                const fields = def.fields.flatMap((field) => Object.keys(field));
-                collections.push({ name, fields: fields, ddoc });
+    // Get all collections names in database
+    public async collectionNames(): Promise<string[]> {
+        const requiredFields = this.collectionFields;
+        const selector = Object.assign({}, ...requiredFields.map(f => ({[f]: {"$gt": ""}})))
+        const result = await this.db.find({fields: requiredFields, selector })
+        const names =  result.docs.map(doc => (doc as any).collection);
+        // Get only unique collection names
+        return [... new Set(names)];
+    }
+
+    public async collections(): Promise<Collection[]>{
+        // Copy provided collections
+        const collectionMap = Object.assign({}, ...this.providedCollections.map(c => ({[c.name]: c})));
+        const providedCollectionNames = Object.keys(collectionMap);
+        const foundCollectionNames = await this.collectionNames();
+
+        // If a collection definition wasn't found (new runtime collection defined) generate a new definition
+        for(const name of foundCollectionNames){
+            if(!providedCollectionNames.includes(name)){
+                // FIXME: Generate collection definition from all common keys
+                continue
             }
-        });
-        return collections;
+        }
+        return Object.values(collectionMap);
     }
 
     public async init() {
         console.log("Database connected");
-        await this.initIndexes();
+        await this.initCollections();
     }
 
     // Clear all created indexes
@@ -133,10 +142,10 @@ export class PulseDatabase {
         );
     }
 
-    protected async initIndexes() {
-        for (const options of this.providedIndexes) {
+    protected async initCollections() {
+        for (const options of this.providedCollections) {
             console.log("Creating index:", options);
-            await this.db.createIndex({ index: { ...options } });
+            await this.db.createIndex({ index: options });
         }
     }
 
