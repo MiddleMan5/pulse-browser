@@ -82,20 +82,22 @@ export class PulseDatabase {
     };
 
 
-    // Get all provided (non-special) collections in database
     public async createCollection(collection: Omit<Collection, "ddoc">) {
         const newCollection = buildCollection(collection.name, collection.fields);
         await this.db.createIndex({index: newCollection});
     }
 
-    // Get all provided (non-special) collections in database
+    // Remove all documents in a collection
     public async removeCollection(collection: Collection | string) {
         const collections = await this.collections();
         const name = typeof collection === "string" ? collection : collection.name;
         const match = collections.find((c) => c.name === name);
         if (match) {
-            console.log("Deleting index:", match);
-            await this.db.deleteIndex(match);
+            const collectionDocs = await this.db.find({selector: {
+                "collection": match.name,
+            }, fields: ["_id", "_rev"]});
+            // This is literally the worst database...
+            await this.db.bulkDocs(collectionDocs.docs.map(doc => ({...doc,  _deleted: true})));
         } else {
             console.log(`No such collection ${name} found; nothing to do`);
         }
