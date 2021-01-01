@@ -1,4 +1,7 @@
-# Pulse Browser
+
+<img src="./public/icons/logo-full.svg" width="300">
+
+---
 
 ![Home Page](docs/home.png)
 
