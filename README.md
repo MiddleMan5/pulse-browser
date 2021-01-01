@@ -66,6 +66,10 @@ Hot reloading is enabled, so you can keep the app running as you develop.
 
 ## License
 
-This project is free to use and distribute for all non-commercial purposes.
+Copyright (C) 2020 Quinn Mikelson
 
 Licensed under the [GNU GPLv3](https://spdx.org/licenses/GPL-3.0-or-later.html) license. A copy of this license is included; see [COPYING](./COPYING)
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
