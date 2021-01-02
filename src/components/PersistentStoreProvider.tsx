@@ -15,24 +15,31 @@ export class PouchReduxStorage {
         this.db = db;
     }
 
+    protected collectionKey(key: string) {
+        return `redux/${key}`;
+    }
+
     async setItem(key: string, value: any) {
+        const cKey = this.collectionKey(key);
         const doc = JSON.parse(value);
-        const _rev = this.docRevs[key];
-        const collection = "redux";
-        const result = await this.db.put({ _id: key, _rev, collection, doc });
-        this.docRevs[key] = result.rev;
+        const _rev = this.docRevs[cKey];
+        const result = await this.db.put(Object.assign({ _id: cKey, _rev }, doc));
+        this.docRevs[cKey] = result.rev;
         return result;
     }
 
     async getItem(key: string) {
-        const doc = (await this.db.get(key)) as any;
-        this.docRevs[key] = doc._rev;
-        return doc?.doc;
+        const cKey = this.collectionKey(key);
+        const { _id, _rev, ...item } = (await this.db.get(cKey)) as any;
+        const doc = item;
+        this.docRevs[cKey] = _rev;
+        return doc;
     }
 
     async removeItem(key: string, value: any) {
-        await this.db.remove({ _id: key, _rev: this.docRevs[key] });
-        delete this.docRevs[key];
+        const cKey = this.collectionKey(key);
+        await this.db.remove({ _id: cKey, _rev: this.docRevs[cKey] });
+        delete this.docRevs[cKey];
     }
 
     async getAllKeys() {

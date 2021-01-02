@@ -20,7 +20,7 @@ import { ImageCard } from "../../components/ImageCard";
 import { SearchBar } from "../../components/SearchBar";
 import { Image, Query, Site } from "../../models";
 import { rootActions, RootState } from "../../store/reducers";
-import { pulseDatabase } from "../../store/database";
+import { usePulse } from "../../store/database";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -121,6 +121,7 @@ interface SearchTabProps {
 
 export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
     const classes = useStyles();
+    const pulse = usePulse();
     const [siteResults, setSiteResults] = useState<[Site, Image[]][]>([]);
 
     const dispatch = useDispatch();
@@ -135,7 +136,7 @@ export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
 
     useEffect(() => {
         (async () => {
-            const siteImages = await pulseDatabase.images(query);
+            const siteImages = await pulse.images(query);
             console.log("Got images:", siteImages);
             setSiteResults(siteImages);
         })().catch((err) => console.error(err));

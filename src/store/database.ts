@@ -2,6 +2,7 @@ import { Tag, Image, Site, Query } from "../models";
 import PouchDB from "pouchdb-browser";
 import PouchDBFind from "pouchdb-find";
 import siteList from "../sites";
+import { usePouch } from "use-pouchdb";
 
 export type AnyDocument = PouchDB.Core.ExistingDocument<{ [key: string]: any }>;
 
@@ -31,13 +32,16 @@ function buildCollection(name: string, fields: string[]): Collection {
     return { name, fields, ddoc };
 }
 
-
 export class PulseDatabase {
-    public db = new PouchDB("PulseDB", { adapter: "idb" });
+    public db: PouchDB.Database;
     protected providedCollections: Collection[] = [
         buildCollection("redux", ["doc"]),
         buildCollection("index", ["uri"]),
     ];
+    
+    constructor(db?: PouchDB.Database){
+        this.db = db ?? new PouchDB("PulseDB", { adapter: "idb" });
+    }
 
     protected collectionFields = ["collection"];
     protected collectionIndex: IndexOptions = {
@@ -154,5 +158,5 @@ export class PulseDatabase {
     }
 }
 
-// Why even make this a class?
-export const pulseDatabase = new PulseDatabase();
+// Wrap usePouch for react components
+export const usePulse = (dbName?: string) => new PulseDatabase(usePouch(dbName));

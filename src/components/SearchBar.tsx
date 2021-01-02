@@ -19,7 +19,7 @@ import TextField from "@material-ui/core/TextField";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { Tag, Query } from "../models";
-import { pulseDatabase } from "../store/database";
+import { usePulse } from "../store/database";
 import { SearchOptions } from "../store/reducers/searches";
 import { siteList } from "../sites";
 
@@ -76,6 +76,7 @@ export interface OptionsMenuButtonProps {
 
 export function OptionsMenuButton(props: React.PropsWithChildren<OptionsMenuButtonProps>) {
     const classes = useStyles();
+
     const [open, setOpen] = React.useState(false);
     // FIXME: Redux
     const [state, setState] = React.useState<OptionState>(defaultOptionState);
@@ -160,6 +161,7 @@ export interface SearchBarProps {
 export function SearchBar(props?: SearchBarProps) {
     const classes = useStyles();
 
+    const pulse = usePulse();
     const [open, setOpen] = React.useState(false);
     const [tagList, setTagList] = React.useState<Tag[]>([]);
     const [queryTags, setQueryTags] = React.useState<Tag[]>([]);
@@ -174,7 +176,7 @@ export function SearchBar(props?: SearchBarProps) {
         }
 
         (async () => {
-            const tags = await pulseDatabase.tags();
+            const tags = await pulse.tags();
             if (active) {
                 setTagList(tags);
             }

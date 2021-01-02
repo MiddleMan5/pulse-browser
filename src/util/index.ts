@@ -42,3 +42,8 @@ export const wrap = <Func extends AnyFunction>(
   };
   return wrappedFn;
 };
+
+// Get the arguments of a function as a tuple
+// Source: https://stackoverflow.com/a/51851844
+
+export type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any ? A : never;

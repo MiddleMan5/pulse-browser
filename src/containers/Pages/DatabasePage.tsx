@@ -1,35 +1,24 @@
 import {
-    Container,
     Box,
+    CircularProgress,
+    Container,
+    Dialog,
+    DialogContent,
+    DialogProps,
+    DialogTitle,
+    IconButton,
     List,
     ListItem,
     ListItemSecondaryAction,
     ListItemText,
     ListSubheader,
-    Switch,
-    TextField,
-    Tooltip,
-    IconButton,
-    CircularProgress,
 } from "@material-ui/core";
-import {
-    Button,
-    DialogActions,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    Dialog,
-    DialogProps,
-} from "@material-ui/core";
-
-import { noOp } from "../../util";
-import { Add as AddIcon, Delete as DeleteIcon } from "@material-ui/icons";
-
 import { makeStyles, Theme } from "@material-ui/core/styles";
+import { Delete as DeleteIcon } from "@material-ui/icons";
 import React, { useState } from "react";
-import PouchDB from "pouchdb-browser";
 import { DocumentTable } from "../../components/DocumentTable";
-import { pulseDatabase, Collection, AnyDocument } from "../../store/database";
+import { AnyDocument, Collection, usePulse } from "../../store/database";
+import { noOp } from "../../util";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -72,6 +61,7 @@ export interface CollectionDialogProps extends DialogProps {
 
 export const CollectionDialog: React.FC<CollectionDialogProps> = ({ collection, open, onClose, ...dialogProps }) => {
     const descriptionElementRef = React.useRef<HTMLElement>(null);
+    const pulse = usePulse();
     // Fixme: Document type
     const [documents, setDocuments] = React.useState<AnyDocument[]>([]);
     const [loading, setLoading] = useState(true);
@@ -86,7 +76,7 @@ export const CollectionDialog: React.FC<CollectionDialogProps> = ({ collection, 
 
             (async () => {
                 if (active) {
-                    const results = await pulseDatabase.db.find({
+                    const results = await pulse.db.find({
                         selector: {
                             collection: collection.name,
                         },
@@ -115,7 +105,7 @@ export const CollectionDialog: React.FC<CollectionDialogProps> = ({ collection, 
                 style={{ textTransform: "capitalize" }}
             >{`${collection.name} Contents`}</DialogTitle>
             <DialogContent dividers={true}>
-                <DocumentTable documents={documents} />
+                <DocumentTable options={{}} />
             </DialogContent>
         </Dialog>
     );
@@ -127,6 +117,7 @@ export function DatabaseControls() {
     const [collections, setCollections] = useState<Collection[]>([]);
     const [activeCollectionName, setActiveCollectionName] = useState("");
     const [showDialog, setShowDialog] = useState(false);
+    const pulse = usePulse();
 
     // Load collections
     React.useEffect(() => {
@@ -138,8 +129,8 @@ export function DatabaseControls() {
 
         (async () => {
             if (active) {
-                await pulseDatabase.init();
-                const dbCollections = await pulseDatabase.collections();
+                await pulse.init();
+                const dbCollections = await pulse.collections();
                 setCollections(dbCollections);
             }
         })().catch((err) => console.error(err));
@@ -165,14 +156,14 @@ export function DatabaseControls() {
 
     const addCollection = () => {
         (async () => {
-            await pulseDatabase.createCollection({ name: `Test ${collections.length}`, fields: [] });
+            await pulse.createCollection({ name: `Test ${collections.length}`, fields: [] });
             setLoading(true);
         })().catch((err) => console.error(err));
     };
 
     const removeCollection = (name: string) => {
         (async () => {
-            await pulseDatabase.removeCollection(name);
+            await pulse.removeCollection(name);
             setLoading(true);
         })().catch((err) => console.error(err));
     };
