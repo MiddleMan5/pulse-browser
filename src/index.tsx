@@ -6,6 +6,7 @@ import { PersistentStoreProvider } from "./components/PersistentStoreProvider";
 import { ThemeProvider } from "./themes";
 import { PulseDatabase } from "./store/database";
 import { Provider as DatabaseProvider } from "use-pouchdb";
+import { LocalDatasource } from "./datasources/local.datasource";
 
 const pulseDb = new PulseDatabase();
 

@@ -2,6 +2,8 @@ import { Site } from "../models";
 import { PicsumSite } from "./picsum.site";
 export * as PicsumSite from "./picsum.site";
 
+// NOTE: Look into the following web scraper https://github.com/ayakashi-io/ayakashi/tree/master/src
+
 // TODO: Design general plugin interface
 let PluginSiteList: Site[] | undefined;
 try {

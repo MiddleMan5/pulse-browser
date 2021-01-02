@@ -1,2 +1,2 @@
-export * from "./reducers"
-export * from "./database"
+export * from "./reducers";
+export * from "./database";

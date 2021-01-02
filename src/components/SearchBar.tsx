@@ -21,7 +21,7 @@ import React from "react";
 import { Tag, Query } from "../models";
 import { usePulse } from "../store/database";
 import { SearchOptions } from "../store/reducers/searches";
-import { siteList } from "../sites";
+import { siteList } from "../datasources";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
