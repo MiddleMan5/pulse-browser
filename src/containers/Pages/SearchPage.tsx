@@ -18,9 +18,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ImageCard } from "../../components/ImageCard";
 import { SearchBar } from "../../components/SearchBar";
-import { Image, Query, Site } from "../../models";
+import { ImageEntity, Query } from "../../models";
 import { rootActions, RootState } from "../../store/reducers";
 import { usePulse } from "../../store/database";
+import { PicsumSite } from "../../sites/picsum.site";
+import { RestDatasource } from "../../datasources";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -119,10 +121,13 @@ interface SearchTabProps {
     searchId: string;
 }
 
+// FIXME: Tech demo
+const picsum = new PicsumSite();
+
 export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
     const classes = useStyles();
     const pulse = usePulse();
-    const [siteResults, setSiteResults] = useState<[Site, Image[]][]>([]);
+    const [siteResults, setSiteResults] = useState<[RestDatasource, ImageEntity[]][]>([[picsum, []]]);
 
     const dispatch = useDispatch();
     const { updateSearch } = rootActions.searches;
@@ -136,9 +141,9 @@ export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
 
     useEffect(() => {
         (async () => {
-            const siteImages = await pulse.images(query);
+            const siteImages = await picsum.images(query);
             console.log("Got images:", siteImages);
-            setSiteResults(siteImages);
+            setSiteResults([[picsum, siteImages]]);
         })().catch((err) => console.error(err));
     }, [query]);
 

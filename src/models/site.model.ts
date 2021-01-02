@@ -1,4 +1,4 @@
-import { Image } from "./image.model";
+import { ImageEntity } from "./image.model";
 
 export type Tag = string;
 
@@ -21,7 +21,7 @@ export interface Site {
     readonly props: SiteProps;
 
     // Query site for images
-    images(query?: Query): Promise<Image[]>;
+    images(query?: Query): Promise<ImageEntity[]>;
 
     // Returns all supported image tags
     tags(query?: Query): Promise<Tag[]>;

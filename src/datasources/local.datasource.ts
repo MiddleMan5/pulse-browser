@@ -22,7 +22,7 @@ export class LocalDatasource extends DataSource<LocalEntityProps, LocalQuery> {
     constructor(config: LocalDatasourceConfig) {
         super({});
         config.recursive = config?.recursive ?? false;
-        config!.icon = config?.icon ?? FolderIcon;
+        config.icon = config?.icon ?? FolderIcon;
         this.config = config;
     }
 

@@ -6,4 +6,4 @@ export interface ImageProps extends EntityData {
     tags: Tag[];
 }
 
-export interface Image extends Entity<ImageProps> {}
+export class ImageEntity extends Entity<ImageProps> {}

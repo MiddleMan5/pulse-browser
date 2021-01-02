@@ -19,6 +19,7 @@ import TextField from "@material-ui/core/TextField";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { Tag, Query } from "../models";
+import { PicsumSite } from "../sites/picsum.site";
 import { usePulse } from "../store/database";
 import { SearchOptions } from "../store/reducers/searches";
 
@@ -159,6 +160,9 @@ export interface SearchBarProps {
     query?: Query;
 }
 
+// FIXME: Tech demo
+const picsum = new PicsumSite();
+
 export function SearchBar(props?: SearchBarProps) {
     const classes = useStyles();
 
@@ -177,7 +181,7 @@ export function SearchBar(props?: SearchBarProps) {
         }
 
         (async () => {
-            const tags = await pulse.tags();
+            const tags = await picsum.tags();
             if (active) {
                 setTagList(tags);
             }

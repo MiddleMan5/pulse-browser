@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { Tag, Image, Query } from "../../models";
+import { Tag, ImageEntity, Query } from "../../models";
 import { createSlice, PayloadAction, createEntityAdapter, EntityState } from "@reduxjs/toolkit";
 
 export interface SearchOptions {}
@@ -7,7 +7,7 @@ export interface SearchOptions {}
 export interface Search {
     id: string;
     query: Query;
-    results: Image[];
+    results: ImageEntity[];
     options?: SearchOptions;
 }
 

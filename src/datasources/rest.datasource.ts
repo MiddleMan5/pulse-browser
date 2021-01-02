@@ -1,10 +1,10 @@
 import { DataSource, AnyObject, Command, Entity } from "../models";
-import { Folder as FolderIcon } from "@material-ui/icons";
-import _path from "path";
-import { promises as fs } from "fs";
+import { Http as HttpIcon } from "@material-ui/icons";
+import axios from "axios";
 
 export interface RestEntityProps extends Entity {
-    path?: string;
+    uri?: string;
+    tags?: string[];
 }
 
 export interface RestQuery {
@@ -12,45 +12,42 @@ export interface RestQuery {
 }
 
 export interface RestDatasourceConfig extends AnyObject {
-    directory: string;
-    recursive?: boolean;
-    icon?: typeof FolderIcon;
+    uri: string;
+    auth?: string;
+    timeout?: number;
+    icon?: typeof HttpIcon;
 }
 
 export class RestDatasource extends DataSource<RestEntityProps, RestQuery> {
     config: RestDatasourceConfig;
     constructor(config: RestDatasourceConfig) {
         super({});
-        config.recursive = config?.recursive ?? false;
-        config!.icon = config?.icon ?? FolderIcon;
+        config.icon = config?.icon ?? HttpIcon;
+        config.timeout = config?.timeout ?? 5000;
         this.config = config;
     }
 
-    async init(): Promise<void> {
-        if (!(await this.online())) {
-            console.log("Creating directory:", this.config.directory);
-            await fs.mkdir(this.config.directory);
-        }
-    }
+    async init(): Promise<void> {}
 
     async online(): Promise<boolean> {
         try {
-            await fs.access(this.config.directory);
-            return true;
+            const result = await axios.get(this.config.uri, { timeout: this.config.timeout });
+            return result.status === 200;
         } catch (ex) {
             return false;
         }
     }
 
     async find(query?: RestQuery): Promise<Entity<RestEntityProps>[]> {
-        let paths = await fs.readdir(this.config.directory);
-        if (query?.regexp) {
-            paths = paths.filter(query.regexp.test);
-        }
-        return paths.map((path) => {
-            const name = _path.basename(path);
-            // TODO: Maybe use user@<hostname> syntax since id is supposed to be universal
-            return new Entity({ path, name, id: `file://${path}` });
-        });
+        return [];
+    }
+
+    public buildUri(path?: string, params?: AnyObject): string {
+        const pathStr = path ? `/${path}` : "";
+        const paramStr = Object.entries(params ?? {})
+            .map((kv) => kv.map(encodeURIComponent).join("="))
+            .join("&");
+
+        return `${this.config.uri}${pathStr}?${paramStr}`;
     }
 }
