@@ -4,12 +4,17 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { LocalDatasource, RestDatasource, useDatasource } from "../../datasources";
 import { usePulse } from "../../store/database";
+import { PicsumSite } from "../../sites/picsum.site";
+import { Folder as FolderIcon, Http as HttpIcon } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {},
     })
 );
+
+// FIXME: Tech demo
+const picsum = new PicsumSite();
 
 export default function SettingsPage() {
     const classes = useStyles();
@@ -37,7 +42,14 @@ export default function SettingsPage() {
                         <ListItemText primary={local.name} />
                         <ListItemText primary={local.config.directory} />
                         <ListItemIcon>
-                            <local.config.icon />
+                            <FolderIcon />
+                        </ListItemIcon>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText primary={picsum.name} />
+                        <ListItemText primary={picsum.config.uri} />
+                        <ListItemIcon>
+                            <HttpIcon />
                         </ListItemIcon>
                     </ListItem>
                 </List>
