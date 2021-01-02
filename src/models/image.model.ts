@@ -1,6 +1,9 @@
-import { AddressableResource, Tag } from "./resource.model";
+import { Tag } from "./site.model";
+import { Entity, EntityData } from "./entity.model";
 
-export interface Image extends AddressableResource<Promise<Buffer>> {
+export interface ImageProps extends EntityData {
     uri: string;
     tags: Tag[];
 }
+
+export interface Image extends Entity<ImageProps> {}

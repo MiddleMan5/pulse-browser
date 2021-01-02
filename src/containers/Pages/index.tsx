@@ -1,12 +1,18 @@
 import { Paper, Tab, Tabs, Theme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { Search as SearchIcon, Settings as SettingsIcon, Storage as StorageIcon } from "@material-ui/icons";
+import {
+    Search as SearchIcon,
+    Settings as SettingsIcon,
+    Storage as StorageIcon,
+    DataUsage as DataUsageIcon,
+} from "@material-ui/icons";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { rootActions, RootState } from "../../store/reducers";
 import SearchPage from "./SearchPage";
 import SettingsPage from "./SettingsPage";
 import DatabasePage from "./DatabasePage";
+import DatasourcePage from "./DatasourcePage";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -39,6 +45,7 @@ export const RootPage: React.FC = () => {
     const pages = [
         { label: "Search", icon: <SearchIcon />, element: <SearchPage /> },
         { label: "Database", icon: <StorageIcon />, element: <DatabasePage /> },
+        { label: "Datasources", icon: <DataUsageIcon />, element: <DatasourcePage /> },
         { label: "Settings", icon: <SettingsIcon />, element: <SettingsPage /> },
     ];
 

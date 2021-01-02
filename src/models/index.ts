@@ -1,7 +1,6 @@
 export * from "./entity.model";
 export * from "./image.model";
 export * from "./site.model";
-export * from "./entity.model";
 export * from "./datasource.model";
 
 export type Editor = "@pulsebrowser/html-editor" | "@pulsebrowser/json-editor" | "@pulsebrowser/text-editor";

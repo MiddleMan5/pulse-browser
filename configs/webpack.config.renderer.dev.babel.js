@@ -14,6 +14,7 @@ if (process.env.NODE_ENV === "production") {
     CheckNodeEnv("development");
 }
 
+
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
 const dllDir = path.join(__dirname, "../dist/dll");

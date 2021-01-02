@@ -1,20 +1,10 @@
-import { Site } from "../models";
-import { PicsumSite } from "./picsum.site";
-export * as PicsumSite from "./picsum.site";
+export * from "./local.datasource";
+export * from "./rest.datasource";
+import { LocalDatasource } from "./local.datasource";
+import path from "path";
 
-// NOTE: Look into the following web scraper https://github.com/ayakashi-io/ayakashi/tree/master/src
-
-// TODO: Design general plugin interface
-let PluginSiteList: Site[] | undefined;
-try {
-    PluginSiteList = require("../../plugins/sites").default;
-} catch (ex) {
-    console.debug("Unable to import site plugins:", ex);
+// FIXME: This is just a tech demo
+export function useDatasource(names: string[]) {
+    const home = process.env?.HOME ?? "/";
+    return new LocalDatasource({ directory: path.join(home, "Pictures"), recursive: true });
 }
-
-export const siteList: Site[] = [new PicsumSite()];
-if (PluginSiteList != null) {
-    siteList.push(...PluginSiteList);
-}
-// Export list of sites
-export default siteList;

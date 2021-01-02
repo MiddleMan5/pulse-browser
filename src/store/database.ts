@@ -1,6 +1,7 @@
 import PouchDB from "pouchdb-browser";
 import PouchDBFind from "pouchdb-find";
 import { usePouch } from "use-pouchdb";
+import { Entity } from "../models";
 
 export type AnyDocument = PouchDB.Core.ExistingDocument<{ [key: string]: any }>;
 
@@ -66,6 +67,16 @@ export class Collection {
     public async exists(): Promise<boolean> {
         const result = await this.allDocs({ limit: 1 });
         return result?.rows?.length > 1;
+    }
+
+    // Check at least one document exists in collection
+    public async insert(data: Entity | Entity[]) {
+        const documents = (Array.isArray(data) ? data : [data]).map((d) => ({
+            ...d.toJSON(),
+            _id: `${this.name}/${d.id}`,
+        }));
+        const result = await this.db.bulkDocs(documents);
+        return result;
     }
 }
 

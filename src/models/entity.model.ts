@@ -37,6 +37,7 @@ export interface ModelDefinition {
     settings?: ModelSettings;
 }
 
+// FIXME: Static properties are the whole point of the Model type (name)
 export class Model implements ModelDefinition {
     readonly name: string;
     properties: { [name: string]: PropertyDefinition };

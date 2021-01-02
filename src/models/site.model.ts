@@ -1,5 +1,6 @@
-import { Tag, AddressableResource } from "./resource.model";
 import { Image } from "./image.model";
+
+export type Tag = string;
 
 export interface Query {
     tags?: Tag[];

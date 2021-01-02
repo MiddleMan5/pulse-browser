@@ -3,23 +3,23 @@ import { Folder as FolderIcon } from "@material-ui/icons";
 import _path from "path";
 import { promises as fs } from "fs";
 
-export interface LocalEntityProps extends Entity {
+export interface RestEntityProps extends Entity {
     path?: string;
 }
 
-export interface LocalQuery {
+export interface RestQuery {
     regexp?: RegExp;
 }
 
-export interface LocalDatasourceConfig extends AnyObject {
+export interface RestDatasourceConfig extends AnyObject {
     directory: string;
     recursive?: boolean;
     icon?: typeof FolderIcon;
 }
 
-export class LocalDatasource extends DataSource<LocalEntityProps, LocalQuery> {
-    config: LocalDatasourceConfig;
-    constructor(config: LocalDatasourceConfig) {
+export class RestDatasource extends DataSource<RestEntityProps, RestQuery> {
+    config: RestDatasourceConfig;
+    constructor(config: RestDatasourceConfig) {
         super({});
         config.recursive = config?.recursive ?? false;
         config!.icon = config?.icon ?? FolderIcon;
@@ -42,7 +42,7 @@ export class LocalDatasource extends DataSource<LocalEntityProps, LocalQuery> {
         }
     }
 
-    async find(query?: LocalQuery): Promise<Entity<LocalEntityProps>[]> {
+    async find(query?: RestQuery): Promise<Entity<RestEntityProps>[]> {
         let paths = await fs.readdir(this.config.directory);
         if (query?.regexp) {
             paths = paths.filter(query.regexp.test);
