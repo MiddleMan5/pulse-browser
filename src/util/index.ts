@@ -25,3 +25,20 @@ export const LanguageMap = Object.assign(
 export const isRenderer = () => process && (process as any)?.type === "renderer";
 
 export const noOp = (...args: any[]) => ({});
+
+
+// Wrap a function while preserving types
+
+// Source: https://stackoverflow.com/a/61212868
+
+export type AnyFunction = (...args: any[]) => any;
+
+export const wrap = <Func extends AnyFunction>(
+  fn: Func,
+): ((...args: Parameters<Func>) => ReturnType<Func>) => {
+  const wrappedFn = (...args: Parameters<Func>): ReturnType<Func> => {
+      // your code here
+      return fn(...args);
+  };
+  return wrappedFn;
+};

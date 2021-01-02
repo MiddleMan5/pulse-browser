@@ -1,5 +1,4 @@
 export * from "./ImageCard";
-export * from "../themes";
 import { CircularProgress, Box } from "@material-ui/core";
 import loadable from "@loadable/component";
 import React from "react";

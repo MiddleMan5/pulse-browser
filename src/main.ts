@@ -36,7 +36,7 @@ main: {
 */
 
 // Using a seperate browser window for worker processes allows us to import native modules
-export class Worker {
+export class WorkerWindow {
     protected window?: BrowserWindow;
 
     // FIXME: This implies one channel per worker
@@ -113,7 +113,7 @@ export interface MainConfig {
 
 export class Main {
     protected mainWindow?: BrowserWindow;
-    protected workers: Worker[] = [];
+    protected workers: WorkerWindow[] = [];
 
     constructor(config: MainConfig) {
         if (config.nodeEnv === "production") {
@@ -233,7 +233,7 @@ export class Main {
             });
 
             // Start web workers
-            this.workers.push(new Worker());
+            this.workers.push(new WorkerWindow());
         }
     }
 }

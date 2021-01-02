@@ -17,7 +17,8 @@ export const ThemeList = ThemeNames.map((name) => {
 });
 Object.assign(ThemeMap, ...ThemeList);
 
-export const StoreThemeProvider: React.FC = ({ children }) => {
+// Load theme from redux store
+export const ThemeProvider: React.FC = ({ children }) => {
     const { theme } = useSelector((state: RootState) => state.settings);
 
     return <MuiThemeProvider theme={ThemeMap[theme]}>{children}</MuiThemeProvider>;

@@ -25,53 +25,18 @@ export interface Collection {
     ddoc: string;
 }
 
-// Allows redux storage in PouchDB
-// TODO: Move this somewhere else
-export class PouchReduxStorage {
-    protected db: PouchDB.Database;
-    protected docRevs: { [key: string]: any } = {};
-
-    constructor(db: PouchDB.Database) {
-        this.db = db;
-    }
-
-    async setItem(key: string, value: any) {
-        const doc = JSON.parse(value);
-        const _rev = this.docRevs[key];
-        const collection = "redux";
-        const result = await this.db.put({ _id: key, _rev, collection, doc });
-        this.docRevs[key] = result.rev;
-        return result;
-    }
-
-    async getItem(key: string) {
-        const doc = (await this.db.get(key)) as any;
-        this.docRevs[key] = doc._rev;
-        return doc?.doc;
-    }
-
-    async removeItem(key: string, value: any) {
-        await this.db.remove({ _id: key, _rev: this.docRevs[key] });
-        delete this.docRevs[key];
-    }
-
-    async getAllKeys() {
-        return Object.keys(this.docRevs);
-    }
-}
 
 function buildCollection(name: string, fields: string[]): Collection {
     const ddoc = `${name}.collection.index`;
     return { name, fields, ddoc };
 }
 
+
 export class PulseDatabase {
     public db = new PouchDB("PulseDB", { adapter: "idb" });
-    public storage = new PouchReduxStorage(this.db);
     protected providedCollections: Collection[] = [
         buildCollection("redux", ["doc"]),
-        buildCollection("images", ["id", "uri", "tags"]),
-        buildCollection("tags", ["tag"]),
+        buildCollection("index", ["uri"]),
     ];
 
     protected collectionFields = ["collection"];

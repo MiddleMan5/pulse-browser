@@ -8,6 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { AnyDocument } from "../store/database";
+import { useAllDocs } from 'use-pouchdb'
 
 const useStyles = makeStyles({
     table: {
