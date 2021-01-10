@@ -22,7 +22,7 @@ import { ImageEntity, Query } from "../../models";
 import { rootActions, RootState } from "../../store/reducers";
 import { usePulse } from "../../store/database";
 import { PicsumSite } from "../../sites/picsum.site";
-import { RestDatasource } from "../../datasources";
+import { RestConnector } from "../../connectors";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -127,7 +127,7 @@ const picsum = new PicsumSite();
 export const SearchTab: React.FC<SearchTabProps> = ({ searchId }) => {
     const classes = useStyles();
     const pulse = usePulse();
-    const [siteResults, setSiteResults] = useState<[RestDatasource, ImageEntity[]][]>([[picsum, []]]);
+    const [siteResults, setSiteResults] = useState<[RestConnector, ImageEntity[]][]>([[picsum, []]]);
 
     const dispatch = useDispatch();
     const { updateSearch } = rootActions.searches;

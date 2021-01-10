@@ -1,4 +1,4 @@
-import { DataSource, AnyObject, Command, Entity } from "../models";
+import { Connector, AnyObject, Command, Entity } from "../models";
 import { Http as HttpIcon } from "@material-ui/icons";
 import axios from "axios";
 
@@ -11,16 +11,16 @@ export interface RestQuery {
     regexp?: RegExp;
 }
 
-export interface RestDatasourceConfig extends AnyObject {
+export interface RestConnectorConfig extends AnyObject {
     uri: string;
     auth?: string;
     timeout?: number;
     icon?: typeof HttpIcon;
 }
 
-export class RestDatasource extends DataSource<RestEntityProps, RestQuery> {
-    config: RestDatasourceConfig;
-    constructor(config: RestDatasourceConfig) {
+export class RestConnector extends Connector<RestEntityProps, RestQuery> {
+    config: RestConnectorConfig;
+    constructor(config: RestConnectorConfig) {
         super({});
         config.icon = config?.icon ?? HttpIcon;
         config.timeout = config?.timeout ?? 5000;

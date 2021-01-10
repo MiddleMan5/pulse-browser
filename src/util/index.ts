@@ -1,3 +1,4 @@
+export * from "./types";
 import { Language } from "../models";
 
 // FIXME: Language support is just a prototype right now

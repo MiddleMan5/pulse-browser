@@ -1,4 +1,4 @@
-import { DataSource, AnyObject, Command, Entity } from "../models";
+import { Connector, AnyObject, Command, Entity } from "../models";
 import { Folder as FolderIcon } from "@material-ui/icons";
 import _path from "path";
 import { promises as fs } from "fs";
@@ -11,15 +11,15 @@ export interface LocalQuery {
     regexp?: RegExp;
 }
 
-export interface LocalDatasourceConfig extends AnyObject {
+export interface LocalConnectorConfig extends AnyObject {
     directory: string;
     recursive?: boolean;
     icon?: typeof FolderIcon;
 }
 
-export class LocalDatasource extends DataSource<LocalEntityProps, LocalQuery> {
-    config: LocalDatasourceConfig;
-    constructor(config: LocalDatasourceConfig) {
+export class LocalConnector extends Connector<LocalEntityProps, LocalQuery> {
+    config: LocalConnectorConfig;
+    constructor(config: LocalConnectorConfig) {
         super({});
         config.recursive = config?.recursive ?? false;
         config.icon = config?.icon ?? FolderIcon;

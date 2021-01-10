@@ -1,4 +1,6 @@
 import { ImageEntity } from "./image.model";
+import { Entity } from "./entity.model";
+import { IsFQDN, IsNotEmpty } from "class-validator";
 
 export type Tag = string;
 
@@ -10,22 +12,31 @@ export interface Query {
 
 export interface SiteProps {
     uri: string;
-    // Authentication/Authorization information
-    auth?: object;
-    // Image data to show when browsing available sites
-    icon?: any;
+    label: string;
 }
 
-export interface Site {
-    // Site model configuration
-    readonly props: SiteProps;
+export abstract class Site extends Entity implements SiteProps {
+    @IsFQDN()
+    @IsNotEmpty()
+    uri: string = "";
+
+    @IsNotEmpty()
+    // A unique, human readable, site name
+    label: string = "";
 
     // Query site for images
-    images(query?: Query): Promise<ImageEntity[]>;
+    images(query?: Query): Promise<ImageEntity[]> {
+        throw new Error("Not Implemented");
+    }
 
     // Returns all supported image tags
-    tags(query?: Query): Promise<Tag[]>;
+    tags(query?: Query): Promise<Tag[]> {
+        throw new Error("Not Implemented");
+    }
 
-    // A unique, human readable, site name
-    name: string;
+    constructor(data: SiteProps) {
+        super();
+        this.uri = data.uri;
+        this.label = data.label;
+    }
 }

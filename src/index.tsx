@@ -27,4 +27,4 @@ export const Root: React.FC = () => {
     );
 };
 
-render(<Root />, document.getElementById("root"));
+// render(<Root />, document.getElementById("root"));
