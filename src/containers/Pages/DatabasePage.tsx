@@ -17,8 +17,9 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import { Delete as DeleteIcon } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import React, { useState } from "react";
+import { PouchDBError } from "../../components";
 import { CollectionTable } from "../../components/CollectionTable";
-import { AnyDocument, Collection, usePulse } from "../../store/database";
+import { AnyDocument, Collection, usePulse, useCollection } from "../../store/database";
 import { noOp } from "../../util";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -60,54 +61,43 @@ export const CollectionDialog: React.FC<CollectionDialogProps> = ({ name, open, 
 export interface CollectionItemProps {
     name: string;
     onClick?: (name: string) => void;
-    removeCollection?: (name: string) => void;
 }
 
-export const CollectionItem: React.FC<CollectionItemProps> = ({ name, onClick, removeCollection }) => {
+export const CollectionItem: React.FC<CollectionItemProps> = ({ name, onClick }) => {
     const classes = useStyles();
 
-    const pulse = usePulse();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | any | undefined>();
+    const [docs, loading, error, collection] = useCollection(name);
     const [fields, setFields] = useState<string[]>([]);
 
     const handleClick = () => (onClick ?? noOp)(name);
-    const handleRemove = () => (removeCollection ?? noOp)(name);
 
     React.useEffect(() => {
         if (!loading) {
-            setLoading(true);
             (async () => {
-                const collection = pulse.collection(name);
                 setFields((await collection.fields()).sort());
-                setLoading(false);
-            })()
-                .catch((err) => setError(err))
-                .finally(() => setLoading(false));
+            })().catch((err) => console.error(err));
         }
-    }, []);
+    }, [loading]);
 
     if (loading) {
         return <CircularProgress />;
     }
 
     if (error != null) {
-        // TODO: Find a way to use usePouch errors
-        return (
-            <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                <strong>{error?.name ?? "Failed to load documents"}</strong>:{" "}
-                {error?.message ?? "No information was provided"}
-            </Alert>
-        );
+        return <PouchDBError {...error} />;
     }
+
+    const destroyCollection = () => {
+        console.log("Destroying collection:", collection.name);
+        collection.destroy().catch((err) => console.error(err));
+    };
 
     return (
         <ListItem button onClick={handleClick} className={classes.collection}>
             <ListItemText id={`collection-list-label-${name}`} primary={name} />
             <ListItemText id={`collection-list-value-${name}`} primary={fields.join(", ")} />
             <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="delete" onClick={handleRemove}>
+                <IconButton edge="end" aria-label="delete" onClick={() => destroyCollection()}>
                     <DeleteIcon />
                 </IconButton>
             </ListItemSecondaryAction>
@@ -153,12 +143,7 @@ export default function DatabasePage(props: React.PropsWithChildren<DatabasePage
             <Box>
                 <List subheader={<ListSubheader>Collections</ListSubheader>}>
                     {collectionNames.map((name) => (
-                        <CollectionItem
-                            key={name}
-                            name={name}
-                            removeCollection={() => {}}
-                            onClick={openCollectionDialog}
-                        />
+                        <CollectionItem key={name} name={name} onClick={openCollectionDialog} />
                     ))}
                 </List>
                 <CollectionDialog

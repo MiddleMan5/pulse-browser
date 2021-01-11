@@ -114,7 +114,11 @@ export const PersistentStoreProvider: React.FC = ({ children }) => {
         })().catch((err) => console.error("Failed to initialize redux store:", err));
     }, []);
 
-    return store == null ? <CircularProgress /> : <StoreProvider store={store}>{children}</StoreProvider>;
+    if (store == null) {
+        return <CircularProgress />;
+    } else {
+        return <StoreProvider store={store}>{children}</StoreProvider>;
+    }
 };
 
 export default PersistentStoreProvider;

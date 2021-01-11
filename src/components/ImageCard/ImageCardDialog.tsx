@@ -7,6 +7,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Paper, { PaperProps } from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Draggable from "react-draggable";
+import { useImage } from "../../models";
+import { CircularProgress } from "@material-ui/core";
+import { PouchDBError } from "../PouchDBError";
 
 function PaperComponent(props: PaperProps) {
     return (
@@ -16,24 +19,40 @@ function PaperComponent(props: PaperProps) {
     );
 }
 
-export interface ImageCardDialogProps {
-    open: boolean;
-    title: any;
-    onClose: () => void;
-}
-
 const useStyles = makeStyles({
     root: {
         maxWidth: "90%",
     },
+    // TODO: Something quirky is going on with the full size image size
+    imageDialogContent: {
+        maxWidth: "100%",
+        maxHeight: "100%",
+    },
 });
 
-export function ImageCardDialog(props: React.PropsWithChildren<ImageCardDialogProps>) {
+export interface ImageCardDialogProps {
+    open: boolean;
+    onClose: () => void;
+    documentId: string;
+}
+
+export const ImageCardDialog: React.FC<ImageCardDialogProps> = ({ documentId, children, onClose, open }) => {
     const classes = useStyles();
+    const [image, loading, error] = useImage(documentId);
+
+    // TODO: This may cause infinite loading issues
+    if (loading || image == null) {
+        return <CircularProgress />;
+    }
+
+    if (error != null) {
+        return <PouchDBError {...error} />;
+    }
+
     return (
         <Dialog
-            open={props.open}
-            onClose={props.onClose}
+            open={open}
+            onClose={onClose}
             PaperComponent={PaperComponent}
             aria-labelledby="draggable-dialog-title"
             fullWidth
@@ -41,14 +60,17 @@ export function ImageCardDialog(props: React.PropsWithChildren<ImageCardDialogPr
             className={classes.root}
         >
             <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
-                {props.title}
+                {image.name}
             </DialogTitle>
-            <DialogContent>{props.children}</DialogContent>
+            <DialogContent>
+                <img src={image.data} className={classes.imageDialogContent} />
+                {children}
+            </DialogContent>
             <DialogActions>
-                <Button onClick={props.onClose} color="primary">
+                <Button onClick={onClose} color="primary">
                     Close
                 </Button>
             </DialogActions>
         </Dialog>
     );
-}
+};

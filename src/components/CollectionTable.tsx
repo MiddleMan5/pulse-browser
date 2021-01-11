@@ -11,6 +11,7 @@ import { CircularProgress } from "@material-ui/core";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { AnyDocument, usePulse } from "../store/database";
 import { useDoc } from "use-pouchdb";
+import PouchDBError from "./PouchDBError";
 
 const useStyles = makeStyles({
     table: {
@@ -35,14 +36,8 @@ export const DocumentRow: React.FC<DocumentRowProps> = ({ id, fields }) => {
         return <CircularProgress />;
     }
 
-    if (error) {
-        return (
-            <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                <strong>{error?.reason ?? "Failed to load document"}</strong>:{" "}
-                {error?.message ?? "No information was provided"}
-            </Alert>
-        );
+    if (error != null) {
+        return <PouchDBError {...error} />;
     }
 
     const docKeys = [...new Set([...Object.keys(doc), ...(fields ?? [])])].sort();
@@ -88,14 +83,7 @@ export const CollectionTable: React.FC<CollectionTableProps> = ({ name }) => {
     }
 
     if (error != null) {
-        // TODO: Find a way to use usePouch errors
-        return (
-            <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                <strong>{error?.name ?? "Failed to load documents"}</strong>:{" "}
-                {error?.message ?? "No information was provided"}
-            </Alert>
-        );
+        return <PouchDBError {...error} />;
     }
 
     return (

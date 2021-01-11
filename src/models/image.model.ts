@@ -1,9 +1,25 @@
 import { Tag } from "./site.model";
-import { Entity, EntityData } from "./entity.model";
 
-export interface ImageProps extends EntityData {
-    uri: string;
+export interface ImageModel {
+    // Filename
+    name: string;
+
+    // FIXME: thumbnail pouchdb attachment type
+    thumbnail: any;
+
+    // URIs that this image can be retrieved with
+    sources: string[];
+
+    // All tags associated with this image
     tags: Tag[];
-}
 
-export class ImageEntity extends Entity<ImageProps> {}
+    // Unique hash identifying this image
+    hash: string;
+
+    // Image artists
+    artists: string[];
+
+    // Dimensions
+    width: number;
+    height: number;
+}

@@ -2,9 +2,12 @@ import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import { makeStyles } from "@material-ui/core/styles";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ImageCardMenu } from "./ImageCardMenu";
 import { ImageCardDialog } from "./ImageCardDialog";
+import { CircularProgress } from "@material-ui/core";
+import { PouchDBError } from "../PouchDBError";
+import { useImage } from "../../models";
 
 const useStyles = makeStyles({
     root: {
@@ -14,43 +17,35 @@ const useStyles = makeStyles({
         height: 140,
         padding: 140,
     },
-    // TODO: Something quirky is going on with the full size image size
-    imageDialogContent: {
-        maxWidth: "100%",
-        maxHeight: "100%",
-    },
 });
 
 interface ImageCardProps {
-    // Path to image
-    image: string;
-    // FIXME: string | special react element thing IntrinsicAttributes
-    title?: string;
-    tags?: string[];
+    documentId: string;
 }
 
-export const ImageCard: React.FC<ImageCardProps> = ({ image, title, tags }) => {
+export const ImageCard: React.FC<ImageCardProps> = ({ documentId }) => {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [image, loading, error] = useImage(documentId);
 
-    const showImageDialog = () => {
-        setOpen(true);
-    };
+    // TODO: Make loading/error same size as thumbnail
+    // FIXME: This may cause infinite loading issues
+    if (loading || image == null) {
+        return <CircularProgress />;
+    }
 
-    const closeImageDialog = () => {
-        setOpen(false);
-    };
+    if (error != null) {
+        return <PouchDBError {...error} />;
+    }
 
     return (
         <Card className={classes.root}>
-            <CardActionArea onClick={showImageDialog}>
+            <CardActionArea onClick={() => setOpen(true)}>
                 <ImageCardMenu>
-                    <CardMedia className={classes.media} image={image} title={title ?? String(image)} />
+                    <CardMedia className={classes.media} image={image.thumbnail} title={image.name} />
                 </ImageCardMenu>
             </CardActionArea>
-            <ImageCardDialog title={title} open={open} onClose={closeImageDialog}>
-                <img src={image} className={classes.imageDialogContent} />
-            </ImageCardDialog>
+            {open && <ImageCardDialog documentId={documentId} open={open} onClose={() => setOpen(false)} />}
         </Card>
     );
 };

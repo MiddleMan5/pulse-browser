@@ -1,14 +1,35 @@
 import { IpcRendererEvent, ipcRenderer, remote } from "electron";
 import { isRenderer } from "./util";
-import { execSync } from "child_process";
 import { defineChannel, IpcRequest } from "./services/ipc.service";
+import { siteList } from "./sites";
+import { ImageModel } from "./models/image.model";
+import { Tag, Query } from "./models/site.model";
 export * from "./services/ipc.service";
 
+const debug = (args: any | any[]) => {
+    if (!Array.isArray(args)) {
+        args = [args];
+    }
+    ipcRenderer.send("log:debug", { args });
+};
+
 export const channels = [
-    defineChannel("systemInfo", () => execSync("uname -a").toString()),
-    defineChannel("echo", (msg: string) => {
-        console.log("Got message:", msg);
-        return msg;
+    defineChannel("searchImages", async (query: Query) => {
+        debug("Searching images");
+        const images: ImageModel[] = [];
+        for (const site of siteList) {
+            const siteImages = await site.images(query);
+            images.push(...siteImages);
+        }
+        return images;
+    }),
+    defineChannel("loadTags", async () => {
+        const tags: Tag[] = [];
+        for (const site of siteList) {
+            const siteTags = await site.tags();
+            tags.push(...siteTags);
+        }
+        return [...new Set(tags.map((tag) => ({ tag: tag, id: tag })))];
     }),
 ];
 

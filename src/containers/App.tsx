@@ -3,6 +3,7 @@ import { createStyles, makeStyles } from "@material-ui/styles";
 import React from "react";
 import SidePanel from "../components/SidePanel";
 import Pages from "./Pages";
+import { SearchProvider } from "../components/SearchProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -21,6 +22,7 @@ const App: React.FC = () => {
 
     return (
         <Box className={classes.root}>
+            <SearchProvider />
             <SidePanel />
             <Pages />
         </Box>

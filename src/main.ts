@@ -76,7 +76,6 @@ export class WorkerWindow {
         // return result;
         const result = new Promise((resolve) => {
             ipcMain.once(responseChannel, (event, response) => {
-                console.log("Got response:", response);
                 resolve(response);
             });
         });
@@ -100,6 +99,16 @@ export class WorkerWindow {
                             }
                         })
                         .catch((err) => console.error(err));
+                }
+            });
+            ipcMain.on("log:debug", (event: IpcMainEvent, request: IpcRequest<any[]>) => {
+                if (this.window) {
+                    console.info.apply(null, ["log:debug", ...(request?.args ?? [])]);
+                }
+            });
+            ipcMain.on("log:info", (event: IpcMainEvent, request: IpcRequest<any[]>) => {
+                if (this.window) {
+                    console.info.apply(null, ["log:info", ...(request?.args ?? [])]);
                 }
             });
         });

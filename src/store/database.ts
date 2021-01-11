@@ -1,7 +1,9 @@
 import PouchDB from "pouchdb-browser";
 import PouchDBFind from "pouchdb-find";
-import { usePouch } from "use-pouchdb";
-import { Entity } from "../models";
+import { usePouch, useAllDocs, CommonOptions, ResultType } from "use-pouchdb";
+import { AnyObject } from "../models";
+import { v4 as uuid } from "uuid";
+import { responsiveFontSizes } from "@material-ui/core";
 
 export type AnyDocument = PouchDB.Core.ExistingDocument<{ [key: string]: any }>;
 
@@ -34,13 +36,17 @@ export class Collection {
         await this.db.createIndex(this.indexOptions);
     }
 
-    public async allDocs(options?: CollectionAllDocsOptions) {
+    public buildAllDocsOptions(options?: CollectionAllDocsOptions) {
         // Limit the result to documents in this collection
         const collectionOptions: PouchDB.Core.AllDocsWithinRangeOptions = {
             startkey: `${this.name}/`,
             endkey: `${this.name}/\uffff`,
         };
-        const opts = Object.assign({}, options ?? {}, collectionOptions);
+        return Object.assign({}, options ?? {}, collectionOptions);
+    }
+
+    public async allDocs(options?: CollectionAllDocsOptions) {
+        const opts = this.buildAllDocsOptions(options);
         const results = await this.db.allDocs(opts);
         return results;
     }
@@ -69,12 +75,19 @@ export class Collection {
         return result?.rows?.length > 1;
     }
 
-    // Check at least one document exists in collection
-    public async insert(data: Entity | Entity[]) {
-        const documents = (Array.isArray(data) ? data : [data]).map((d) => ({
-            ...d.toJSON(),
-            _id: `${this.name}/${d.id}`,
-        }));
+    // Deletes all documents in collection
+    public async destroy() {
+        const docs = await this.allDocs();
+        const resp = await this.db.bulkDocs(docs.rows.map((row) => ({ ...row, deleted: true })));
+        return resp;
+    }
+
+    // Insert one or more documents into database
+    public async insert(data: AnyDocument | AnyObject | (AnyObject | AnyDocument)[]) {
+        const documents = (Array.isArray(data) ? data : [data]).map((d) => {
+            const docId = d?._id ?? d?.id ?? uuid();
+            return { ...d, _id: `${this.name}/${docId}` };
+        });
         const result = await this.db.bulkDocs(documents);
         return result;
     }
@@ -134,3 +147,20 @@ export class PulseDatabase {
 
 // Wrap usePouch for react components
 export const usePulse = (dbName?: string) => new PulseDatabase(usePouch(dbName));
+
+export type UseCollectionOptions = CommonOptions & CollectionAllDocsOptions;
+
+// Infer tuple type from array literal
+const tuple = <T extends any[]>(...args: T): T => args;
+
+// Use a specific collection and associated documents from the database
+export const useCollection = (name: string, options?: UseCollectionOptions) => {
+    const pulse = usePulse(options?.db);
+    const collection = pulse.collection(name);
+    const opts: UseCollectionOptions = collection.buildAllDocsOptions(options);
+    if (options?.db != null) {
+        opts.db = options.db;
+    }
+    const { rows, loading, error } = useAllDocs(opts);
+    return tuple(rows, loading, error, collection);
+};

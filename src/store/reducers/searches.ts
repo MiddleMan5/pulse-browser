@@ -7,7 +7,6 @@ export interface SearchOptions {}
 export interface Search {
     id: string;
     query: Query;
-    results: ImageEntity[];
     options?: SearchOptions;
 }
 
@@ -26,7 +25,7 @@ const searchesSlice = createSlice({
                 query: {
                     page: 0,
                     tags: [],
-                    limit: 1000,
+                    limit: 10,
                 },
                 results: [],
                 options: {},

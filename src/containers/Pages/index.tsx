@@ -12,7 +12,6 @@ import { rootActions, RootState } from "../../store/reducers";
 import SearchPage from "./SearchPage";
 import SettingsPage from "./SettingsPage";
 import DatabasePage from "./DatabasePage";
-import DatasourcePage from "./DatasourcePage";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -45,7 +44,6 @@ export const RootPage: React.FC = () => {
     const pages = [
         { label: "Search", icon: <SearchIcon />, element: <SearchPage /> },
         { label: "Database", icon: <StorageIcon />, element: <DatabasePage /> },
-        { label: "Datasources", icon: <DataUsageIcon />, element: <DatasourcePage /> },
         { label: "Settings", icon: <SettingsIcon />, element: <SettingsPage /> },
     ];
 
